@@ -1,271 +1,372 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PiChordify Kingdom — Demo Core v0.2</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PiChordify Kingdom — v0.3</title>
   <style>
-    :root { --pi:#8a2be2; --ink:#111; --muted:#666; --bg:#faf7ff; }
-    *{box-sizing:border-box} body{margin:0;font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--ink)}
-    header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:#fff;border-bottom:1px solid #eee;position:sticky;top:0}
-    h1{margin:0;font-size:22px;color:var(--pi)} .badge{background:#efe8ff;color:#5a1fb6;padding:6px 10px;border-radius:999px;font-weight:600}
-    main{display:grid;grid-template-columns:1.1fr 0.9fr;gap:16px;padding:16px;max-width:1200px;margin:0 auto}
-    .card{background:#fff;border:1px solid #eee;border-radius:16px;padding:14px}
-    label{font-weight:600;font-size:14px;margin-bottom:6px;display:block}
-    textarea, input[type="text"], input[type="number"]{width:100%;border:1px solid #ddd;border-radius:10px;padding:10px;font-size:14px;background:#fff}
-    textarea{min-height:280px;line-height:1.45;white-space:pre}
+    :root{--pi:#6b4df5;--ink:#222;--bg:#f7f5ff}
+    *{box-sizing:border-box} html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto}
+    header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px}
+    h1{margin:0;font-size:28px;color:var(--pi)}
+    .badge{background:#ede9ff;color:#5a43de;border-radius:16px;padding:6px 12px;font-weight:700}
+    main{max-width:1080px;margin:0 auto;padding:10px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .card{background:#fff;border:1px solid #ece7ff;border-radius:16px;padding:16px}
+    label{display:block;margin:8px 0 6px;font-weight:600}
+    input[type="text"]{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:12px}
+    textarea{width:100%;min-height:330px;font:14px/1.4 ui-monospace,Consolas,Menlo,monospace;border:1px dashed #a9a3ff;background:#fbfaff;border-radius:12px;padding:12px}
     .row{display:flex;gap:10px;flex-wrap:wrap}
-    button{border:0;border-radius:12px;padding:10px 12px;font-weight:700;cursor:pointer}
-    .solid{background:var(--pi);color:#fff}
-    .ghost{background:#f1ebff;color:#4a22a6}
-    .neutral{background:#111;color:#fff}
-    .good{background:#11a36b;color:#fff}
-    .danger{background:#ef4444;color:#fff}
-    .muted{color:var(--muted)}
-    .status{font-family:ui-monospace,Consolas,monospace;background:#fcfcff;border:1px dashed #d7ccff;border-radius:12px;padding:10px;min-height:100px;white-space:pre-wrap}
-    .overlay{border:1px dashed #ddd;border-radius:14px;padding:12px;background:#fff}
-    .kara-line{padding:6px 8px;border-radius:8px}
-    .kara-line.active{background:#f4edff;border:1px solid #e5dbff}
-    .pill{padding:3px 8px;border-radius:999px;background:#f6f6f6;font-size:12px}
-    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    footer{padding:20px;text-align:center;color:#999}
+    button{cursor:pointer;border:0;border-radius:12px;padding:11px 14px;font-weight:700}
+    .primary{background:var(--pi);color:#fff}
+    .ghost{background:#efeaff;color:#4a3ed6}
+    .ok{background:#1ea672;color:#fff}
+    .warn{background:#ffe4c4;color:#8a4600}
+    .danger{background:#ffe6ea;color:#c2274f}
+    .muted{color:#666}
+    .status{min-height:160px;white-space:pre-wrap;background:#111;color:#fff;border-radius:12px;padding:12px;font:14px/1.45 ui-monospace,Consolas}
+    .kara{height:260px;border:1px dashed #ddd;background:#fff;border-radius:12px;padding:12px;overflow:auto}
+    footer{padding:26px 12px;text-align:center;color:#777}
   </style>
 
-  <!-- SDK Pi thật (an toàn: chỉ hoạt động trong Pi Browser) -->
-  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-  <script>
-    // ĐIỀN URL backend thật của Trẫm nếu có (Render/Vercel/Railway…)
-  const BACKEND_BASE = "https://pichordifykingdom-backend.onrender.com";
-    const api = (path, data={}) => {
-      if(!BACKEND_BASE) return Promise.resolve({ premium:false }); // fallback demo
-      return fetch(`${BACKEND_BASE}${path}`, {
-        method:"POST", headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify(data)
-      }).then(r=>r.json()).catch(()=>({ premium:false }));
-    };
-  </script>
+  <!-- Pi SDK (hoạt động trong Pi Browser) -->
+  <script src="https://sdk.minepi.com/pi-sdk-js/2.x/pi-sdk.min.js"></script>
 </head>
 <body>
-<header>
-  <div style="display:flex;gap:10px;align-items:center">
-    <h1>PiChordify Kingdom</h1>
-    <span class="badge" id="tier">Free</span>
-  </div>
-  <div class="row">
-    <button class="ghost" id="btnCheckPremium">Kiểm tra Premium</button>
-    <button class="good" id="btnPayPremium">Thanh toán Premium</button>
-  </div>
-</header>
+  <header>
+    <div style="display:flex;gap:10px;align-items:center">
+      <h1>PiChordify Kingdom</h1>
+      <span class="badge" id="tier">Free</span>
+    </div>
+    <div class="row">
+      <button class="ghost" id="btnCheckPremium">Kiểm tra Premium</button>
+      <button class="ok" id="btnPayPremium">Thanh toán Premium</button>
+    </div>
+  </header>
 
-<main>
-  <section class="card">
-    <div class="row" style="justify-content:space-between;align-items:center">
-      <span class="pill">Demo Core v0.2</span>
-      <div class="row">
-        <button class="ghost" id="btnLoadDemo1">Tải demo 1</button>
-        <button class="ghost" id="btnLoadDemo2">Tải demo 2</button>
-        <button class="ghost" id="btnClear">Xóa</button>
+  <main class="grid">
+    <section class="card">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <span class="muted">Demo Core v0.3</span>
+        <div class="row">
+          <button class="ghost" id="btnLoadDemo1">Tải demo 1</button>
+          <button class="ghost" id="btnLoadDemo2">Tải demo 2</button>
+          <button class="ghost" id="btnClear">Xóa</button>
+        </div>
       </div>
-    </div>
 
-    <label for="title">Tiêu đề</label>
-    <input id="title" type="text" placeholder="Tên bài…" value="Tình Nồng Việt Khúc (demo)"/>
+      <label for="title">Tiêu đề</label>
+      <input id="title" type="text" value="Tình Nồng Việt Khúc (demo)" />
 
-    <label for="lyrics">Lời + hợp âm (mỗi dòng có mốc thời gian)</label>
-    <textarea id="lyrics" spellcheck="false" placeholder="mm:ss  nội dung…&#10;00:00  Am&#10;00:05  F"></textarea>
+      <label for="lyrics">Lời + hợp âm (mỗi dòng có mốc thời gian)</label>
+      <textarea id="lyrics" placeholder="mm:ss    nội dung / hợp âm&#10;00:00    Am&#10;00:05    F&#10;00:10    C&#10;00:15    G&#10;00:20    Dm&#10;00:25    E&#10;00:30    Am"></textarea>
 
-    <div class="row" style="margin-top:10px">
-      <button class="solid" id="btnBuild">Biên dịch &amp; xem trước</button>
-      <button class="neutral" id="btnExportSRT">Export .srt</button>
-      <button class="solid" id="btnExportPDF" title="Premium only">Export PDF (Premium)</button>
-      <button class="danger" id="btnTestBeat">Phát nhịp thử</button>
-    </div>
-
-    <div class="grid2" style="margin-top:12px">
-      <div>
-        <label for="bpm">BPM (nhịp thử)</label>
-        <input id="bpm" type="number" value="80" min="40" max="200"/>
+      <div class="row" style="margin-top:12px">
+        <button class="primary" id="btnCompile">Biên dịch & xem trước</button>
+        <button class="" id="btnSRT">Export .srt</button>
+        <button class="primary" id="btnPDF">Export PDF (Premium)</button>
       </div>
-      <div>
-        <label for="offset">Offset (giây, +/-)</label>
-        <input id="offset" type="number" value="0" step="0.1"/>
+
+      <div class="row" style="margin-top:12px">
+        <div>
+          <label>BPM (nhịp)</label>
+          <input id="bpm" type="text" value="80" style="width:110px" />
+        </div>
+        <div>
+          <label>Offset (giây, +/-)</label>
+          <input id="offset" type="text" value="0" style="width:110px" />
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="card">
-    <label>Trạng thái</label>
-    <div id="status" class="status">Sẵn sàng. Nhấn “Biên dịch & xem trước”.</div>
+    <section class="card">
+      <label>Trạng thái</label>
+      <div id="status" class="status">Sẵn sàng. Nhấn “Biên dịch & xem trước”.</div>
 
-    <div style="height:10px"></div>
-    <label>Xem trước Karaoke/Chord</label>
-    <div id="overlay" class="overlay"></div>
+      <label style="margin-top:12px">Xem trước Karaoke/Chord</label>
+      <div id="preview" class="kara"></div>
 
-    <div class="row" style="margin-top:10px">
-      <button class="ghost" id="btnPlay">▶︎ Play</button>
-      <button class="ghost" id="btnStop">■ Stop</button>
-      <span class="muted" id="clock">00:00</span>
-    </div>
-  </section>
-</main>
+      <div class="row" style="margin-top:12px">
+        <button class="primary" id="btnPlay">▶ Play</button>
+        <button class="ghost" id="btnStop">■ Stop</button>
+      </div>
 
-<footer>© PiChordify Kingdom — Hackathon demo “có lõi chạy được”.</footer>
+      <div class="row" style="margin-top:8px">
+        <span id="time" class="muted">00:00</span>
+      </div>
+    </section>
+  </main>
 
-<script>
-const state = { premium:false, timeline:[], dur:0, playing:false, t0:0, raf:0, ctx:null, tickNodes:[] };
-const $ = (q)=>document.querySelector(q);
-const pad=(n)=>String(Math.floor(n)).padStart(2,'0');
-const fmt=(t)=>`${pad(Math.floor(t/60))}:${pad(Math.floor(t%60))}`;
-const toSeconds=(mmss)=>{ const m=+mmss.slice(0,2), s=+mmss.slice(3,5); return m*60+s; };
+  <footer>© PiChordify Kingdom — Hackathon demo “có nhạc thật” v0.3</footer>
 
-const demo1=`00:00  Am  | Dạo nhạc
-00:05  F   | Lời ca quê hương
-00:10  C   | Mênh mang sông núi
-00:15  G   | Tình nồng Việt khúc
-00:20  Dm  | Ta hát cùng nhau
-00:25  E   | Nối nhịp yêu thương
-00:30  Am  | Điệp khúc
-`;
-const demo2=`00:00  C | Verse
-00:04  G | …
-00:08  Am| …
-00:12  F | …
-00:16  C | Chorus
-00:24  G | …
-00:28  Am| …
-00:32  F | …
-`;
+  <script>
+    /************* CONFIG *************/
+    // ĐỔI URL này thành backend thật của Trẫm
+    const BACKEND_BASE = "https://YOUR-BACKEND.com";
 
-function parseText(src){
-  const out=[]; const lines=src.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-  for(const line of lines){
-    const m=line.match(/^(\d{2}:\d{2})\s+([A-G][#b]?m?(aj)?7?|N\/A)?\s*(?:\|\s*(.*))?$/i);
-    if(!m) continue;
-    out.push({t:toSeconds(m[1]), chord:(m[2]||"").trim(), text:(m[4]||"").trim()});
-  }
-  out.sort((a,b)=>a.t-b.t);
-  return { timeline:out, dur:(out.at(-1)?.t??0)+4 };
-}
-function renderOverlay(){
-  const box=$("#overlay"); box.innerHTML="";
-  state.timeline.forEach((r,i)=>{
-    const div=document.createElement("div"); div.className="kara-line"; div.dataset.t=r.t;
-    div.innerHTML=`<span class="pill">${fmt(r.t)}</span> ${r.chord?`<strong style="color:#5a1fb6">${r.chord}</strong>`:""} ${r.text||""}`;
-    box.appendChild(div);
-  });
-}
-function setStatus(s){ $("#status").textContent=s; }
+    // Dùng Testnet App ID / API Key ở backend (không để ở client)
+    // Client chỉ gọi /approve, /complete, /premium/check của backend.
+    /**********************************/
 
-function startBeat(){
-  if(state.playing) return;
-  if(!state.ctx) state.ctx=new (window.AudioContext||window.webkitAudioContext)();
-  const bpm=Math.max(40,Math.min(200,+($("#bpm").value||80)));
-  const beat=60/bpm; state.playing=true;
-  state.t0=state.ctx.currentTime-(+($("#offset").value||0));
-  scheduleTicks(beat); loop();
-}
-function stopBeat(){
-  state.playing=false; cancelAnimationFrame(state.raf); $("#clock").textContent="00:00";
-  state.tickNodes.forEach(n=>{try{n.stop()}catch{}}); state.tickNodes.length=0;
-}
-function scheduleTicks(beat){
-  const ctx=state.ctx; let t=ctx.currentTime;
-  while(t<ctx.currentTime+8){
-    const osc=ctx.createOscillator(); const env=ctx.createGain();
-    const down = Math.floor((t-state.t0)/beat)%4===0;
-    osc.frequency.value=down?1200:900; env.gain.value=0;
-    env.gain.setTargetAtTime(0.4,t,0.005); env.gain.setTargetAtTime(0.0,t+0.05,0.02);
-    osc.connect(env).connect(ctx.destination); osc.start(t); osc.stop(t+0.08);
-    state.tickNodes.push(osc); t+=beat;
-  }
-  if(state.playing) setTimeout(()=>scheduleTicks(beat),600);
-}
-function loop(){
-  const now = state.ctx.currentTime-state.t0; $("#clock").textContent=fmt(now);
-  let idx=0; for(let i=0;i<state.timeline.length;i++){ if(now+0.001>=state.timeline[i].t) idx=i; }
-  [...$("#overlay").children].forEach((el,i)=>el.classList.toggle("active",i===idx));
-  if(state.playing) state.raf=requestAnimationFrame(loop);
-}
+    /* ---------- Helpers UI ---------- */
+    const $ = (q)=>document.querySelector(q);
+    const statusEl = $('#status');
+    const previewEl = $('#preview');
+    const timeEl = $('#time');
+    const tierEl = $('#tier');
 
-function toSRT(sec){
-  const hh=Math.floor(sec/3600), mm=Math.floor((sec%3600)/60), ss=Math.floor(sec%60), ms=Math.floor((sec%1)*1000);
-  const p2=n=>String(n).padStart(2,"0"), p3=n=>String(n).padStart(3,"0");
-  return `${p2(hh)}:${p2(mm)}:${p2(ss)},${p3(ms)}`;
-}
-function slug(s){ return (s||"pchord").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
-function download(name,text){ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([text],{type:"text/plain"})); a.download=name; a.click(); }
+    function log(s){ statusEl.textContent = String(s); }
+    function pad(n){ return String(n).padStart(2,'0'); }
+    function mmss(t){ t=Math.max(0,t|0); return `${pad((t/60)|0)}:${pad((t%60)|0)}`; }
 
-function exportSRT(){
-  if(!state.timeline.length){ alert("Chưa có timeline."); return; }
-  let srt=""; for(let i=0;i<state.timeline.length;i++){
-    const a=state.timeline[i].t, b=(state.timeline[i+1]?.t ?? (a+3)) - 0.01;
-    const line=[state.timeline[i].chord, state.timeline[i].text].filter(Boolean).join(" — ");
-    srt+=`${i+1}\n${toSRT(a)} --> ${toSRT(b)}\n${line||"(…)"}\n\n`;
-  }
-  download(`${slug($("#title").value)}.srt`, srt);
-}
-function exportPDF(){
-  if(!state.premium){ alert("Tính năng Premium. Vui lòng kích hoạt."); return; }
-  const rows = state.timeline.map(r=>`${fmt(r.t)}    ${r.chord||""}    ${r.text||""}`).join("\n");
-  const content = `PiChordify Kingdom — ${$("#title").value}\n\n${rows}\n`;
-  const blob = new Blob([content], {type:"application/pdf"});
-  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`${slug($("#title").value)}.pdf`; a.click();
-}
-
-/* ===== SDK: Kiểm tra Premium (thật nếu trong Pi Browser + có backend; nếu không -> fallback Free) ===== */
-async function checkPremium(){
-  try{
-    if(window.Pi?.init){ await window.Pi.init({version:"2.0"}); }
-    let uid = null;
-    if(window.Pi?.authenticate){
-      const auth = await window.Pi.authenticate(["payments"], ()=>{});
-      uid = auth?.user?.uid || null;
+    /* ---------- Parse timeline ---------- */
+    // input: lines "mm:ss [text or chord]"
+    function parseLines(txt){
+      const lines = txt.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+      const recs = [];
+      for(const line of lines){
+        const m = line.match(/^(\d{2}):(\d{2})\s+(.*)$/);
+        if(!m) continue;
+        const t = (+m[1])*60+(+m[2]);
+        const body = m[3].trim();
+        recs.push({t, body});
+      }
+      recs.sort((a,b)=>a.t-b.t);
+      // add end times
+      for(let i=0;i<recs.length;i++){
+        recs[i].t2 = (i+1<recs.length)?recs[i+1].t: (recs[i].t+4);
+      }
+      return recs;
     }
-    const res = await api("/api/user-tier", { uid });
-    state.premium = !!res?.premium;
-    $("#tier").textContent = state.premium ? "Premium" : "Free";
-    setStatus(state.premium ? "Premium đã kích hoạt cho người dùng hiện tại."
-                            : "Chưa có Premium cho người dùng hiện tại (chế độ Free).");
-  }catch{
-    state.premium=false; $("#tier").textContent="Free";
-    setStatus("Không xác minh được Premium (mở bằng Pi Browser + cấu hình BACKEND_BASE để kích hoạt).");
-  }
-}
 
-/* ===== SDK: Thanh toán Premium thật (nếu có BACKEND_BASE). Ngoài Pi Browser sẽ báo hướng dẫn. ===== */
-async function payPremium(){
-  try{
-    if(!window.Pi?.createPayment){ alert("Vui lòng mở app bằng Pi Browser để thanh toán."); return; }
-    if(!BACKEND_BASE){ alert("Chưa cấu hình BACKEND_BASE cho backend. Hiện chỉ chạy demo Free."); return; }
+    /* ---------- Preview render ---------- */
+    function renderPreview(recs){
+      const html = recs.map(r=>`
+        <div style="display:flex;gap:10px">
+          <b>${mmss(r.t)}</b>
+          <span>${escapeHtml(r.body)}</span>
+        </div>
+      `).join('');
+      previewEl.innerHTML = html || '<i class="muted">Chưa có nội dung.</i>';
+    }
+    function escapeHtml(s){ return s.replace(/[&<>"]/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c])); }
 
-    await window.Pi.init({ version:"2.0" });
-    await window.Pi.createPayment({
-      amount:"0.10", memo:"PiChordify Premium — demo v0.2", metadata:{ product:"premium_demo_v02" }
-    },{
-      onReadyForServerApproval: async (paymentId)=>{ await api("/api/pi/approve", { paymentId }); },
-      onReadyForServerCompletion: async (paymentId)=>{ await api("/api/pi/complete", { paymentId }); },
-      onCancel: ()=> setStatus("Thanh toán bị hủy."),
-      onError: (err)=> setStatus("Lỗi thanh toán: "+(err?.message||err))
-    });
+    /* ---------- SRT export ---------- */
+    function toSrt(recs, offset=0){
+      let k=1, out=[];
+      for(const r of recs){
+        const t1 = srtTime(r.t+offset);
+        const t2 = srtTime(r.t2+offset);
+        out.push(`${k++}`);
+        out.push(`${t1} --> ${t2}`);
+        out.push(r.body);
+        out.push('');
+      }
+      return out.join('\n');
+    }
+    function srtTime(sec){
+      sec = Math.max(0, sec);
+      const h = Math.floor(sec/3600);
+      const m = Math.floor((sec%3600)/60);
+      const s = Math.floor(sec%60);
+      const ms = Math.floor((sec%1)*1000);
+      const pp = n=>String(n).padStart(2,'0');
+      return `${pp(h)}:${pp(m)}:${pp(s)},${String(ms).padStart(3,'0')}`;
+    }
+    function download(name, text){
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(new Blob([text],{type:'text/plain'}));
+      a.download=name; a.click();
+      setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    }
 
-    await checkPremium();
-    if(state.premium) setStatus("Premium đã bật. Cảm ơn Trẫm!");
-  }catch(e){ alert("Không thanh toán được: " + (e?.message||e)); }
-}
+    /* ---------- Simple synth (pad chords + metronome) ---------- */
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let ctx, metro, playing=false, playStart=0, recsCache=[], bpm=80, offsetSec=0, timer;
 
-/* UI wires */
-$("#btnLoadDemo1").onclick=()=>{ $("#lyrics").value=demo1; setStatus("Đã nạp demo 1."); };
-$("#btnLoadDemo2").onclick=()=>{ $("#lyrics").value=demo2; setStatus("Đã nạp demo 2."); };
-$("#btnClear").onclick =()=>{ $("#lyrics").value=""; setStatus("Đã xóa nội dung."); };
+    const A4=440, SEMI=Math.pow(2,1/12);
+    const NOTE = {C:0,'C#':1,Db:1,D:2,'D#':3,Eb:3,E:4,F:5,'F#':6,Gb:6,G:7,'G#':8,Ab:8,A:9,'A#':10,Bb:10,B:11};
+    function noteFreq(name, octave){
+      // A4=440 reference
+      const n = NOTE[name]; if(n==null) return null;
+      const k = (octave-4)*12 + (n-9); // semitone distance from A4
+      return A4*Math.pow(SEMI,k);
+    }
+    function chordToPitches(ch){
+      // e.g., "Am", "C", "G7" -> triad (no 7th for simplicity)
+      ch = ch.trim();
+      const m = ch.match(/^([A-G](?:#|b)?)(m)?/i);
+      if(!m) return null;
+      const root=m[1].toUpperCase(), minor=!!m[2];
+      // Build triad: root, third, fifth
+      const degrees = minor?[0,3,7]:[0,4,7];
+      const baseOct = 4;
+      return degrees.map(semi=>{
+        // convert semi to note name again (rough), or just compute frequency direct:
+        const rootN = NOTE[root];
+        const total = rootN+semi;
+        const nameIdx = ((total%12)+12)%12;
+        const octave = baseOct + Math.floor((rootN+semi)/12);
+        // find name by value
+        const name = Object.keys(NOTE).find(k=>NOTE[k]===nameIdx && !k.includes('b')); // prefer sharps
+        return noteFreq(name, octave);
+      }).filter(Boolean);
+    }
+    function startChordPad(pitches, when, dur){
+      if(!pitches||!pitches.length) return;
+      const gain = ctx.createGain(); gain.gain.value=0; gain.connect(ctx.destination);
+      const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=1800; lp.Q.value=0.7;
+      gain.connect(lp); lp.connect(ctx.destination);
 
-$("#btnBuild").onclick=()=>{ const r=parseText($("#lyrics").value); state.timeline=r.timeline; state.dur=r.dur; renderOverlay(); setStatus(r.timeline.length?`Đã biên dịch ${r.timeline.length} mốc.`:"Không tìm thấy dòng hợp lệ."); };
-$("#btnTestBeat").onclick=()=>startBeat();
-$("#btnPlay").onclick    =()=>startBeat();
-$("#btnStop").onclick    =()=>stopBeat();
-$("#btnExportSRT").onclick=exportSRT;
-$("#btnExportPDF").onclick=exportPDF;
-$("#btnCheckPremium").onclick=checkPremium;
-$("#btnPayPremium").onclick  =payPremium;
-</script>
+      const voices=[];
+      for(const f of pitches){
+        const o = ctx.createOscillator();
+        o.type='sawtooth'; o.frequency.value=f;
+        o.connect(gain); o.start(when);
+        o.stop(when+dur+0.2);
+        voices.push(o);
+      }
+      // ADSR
+      gain.gain.setValueAtTime(0, when);
+      gain.gain.linearRampToValueAtTime(0.22, when+0.12);
+      gain.gain.linearRampToValueAtTime(0.20, when+dur-0.12);
+      gain.gain.linearRampToValueAtTime(0.0, when+dur);
+
+      // light metronome tick overlay (not chói)
+      if(!metro){ metro = ctx.createOscillator(); const mg=ctx.createGain(); mg.gain.value=0; metro.type='square'; metro.frequency.value=1000; metro.connect(mg); mg.connect(ctx.destination); metro.start(); }
+    }
+    function schedulePlay(recs){
+      const spb = 60/bpm; // seconds per beat
+      const now = ctx.currentTime+0.05;
+      playStart = now;
+      for(const r of recs){
+        const chord=r.body.split(/\s+/)[0]; // lấy token đầu là chord
+        const pitches = chordToPitches(chord);
+        const t = now + (r.t+offsetSec);
+        const dur = Math.max(0.25, (r.t2 - r.t));
+        startChordPad(pitches, t, dur);
+      }
+      // UI timer
+      clearInterval(timer);
+      timer = setInterval(()=>{
+        const t = Math.max(0, (ctx.currentTime - playStart));
+        timeEl.textContent = mmss(t);
+      }, 100);
+    }
+    function stopPlay(){
+      if(ctx){ try{ ctx.close(); }catch{} }
+      ctx = null; playing=false; clearInterval(timer); timeEl.textContent = "00:00";
+    }
+
+    /* ---------- Premium check ---------- */
+    async function getUser(){
+      try{
+        const user = await Pi.authenticate({onIncompletePaymentFound:()=>{}});
+        return user;
+      }catch(e){ log('Pi auth lỗi: '+e?.message); throw e; }
+    }
+    async function checkPremium(uid){
+      const r = await fetch(`${BACKEND_BASE}/api/premium/check`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ uid })
+      });
+      const j = await r.json().catch(()=>({premium:false}));
+      return !!j.premium;
+    }
+
+    /* ---------- Payment flow ---------- */
+    async function payPremium(){
+      try{
+        const user = await getUser();
+        log('Chuẩn bị thanh toán...');
+        const payment = await Pi.createPayment({
+          amount: 0.01, // demo
+          memo: "PiChordify Premium (demo)",
+          metadata: { feature: "export-pdf" }
+        }, {
+          onReadyForServerApproval: async (paymentId)=>{
+            await fetch(`${BACKEND_BASE}/api/payments/approve`,{
+              method:'POST', headers:{'Content-Type':'application/json'},
+              body: JSON.stringify({ paymentId })
+            });
+          },
+          onReadyForServerCompletion: async (paymentId)=>{
+            await fetch(`${BACKEND_BASE}/api/payments/complete`,{
+              method:'POST', headers:{'Content-Type':'application/json'},
+              body: JSON.stringify({ paymentId })
+            });
+          },
+          onCancel: (err)=> log('❌ Hủy thanh toán: '+(err?.message||'')),
+          onError:  (err)=> log('⚠️ Lỗi thanh toán: '+(err?.message||'')),
+        });
+
+        log('Xong ví. Đang xác nhận trạng thái...');
+        const ok = await checkPremium(user.uid);
+        if(ok){ tierEl.textContent='Premium'; tierEl.style.background='#d6f6e8'; tierEl.style.color='#046b4f'; log('✅ Mở khóa Premium'); }
+        else { log('⚠️ Chưa mở khóa. Kiểm tra backend approve/complete.'); }
+      }catch(e){
+        log('Lỗi: '+(e?.message||e));
+      }
+    }
+
+    /* ---------- Bind UI ---------- */
+    let recs=[];
+    function compile(){
+      bpm = +$('#bpm').value || 80;
+      offsetSec = +$('#offset').value || 0;
+      recs = parseLines($('#lyrics').value);
+      recsCache = recs;
+      renderPreview(recs);
+      log(`Đã biên dịch ${recs.length} dòng. BPM=${bpm}, offset=${offsetSec}s`);
+    }
+
+    $('#btnCompile').onclick = compile;
+    $('#btnSRT').onclick = ()=>{ if(!recsCache.length) compile(); const srt=toSrt(recsCache, offsetSec); download('lyrics.srt', srt); };
+    $('#btnPDF').onclick = payPremium;
+
+    $('#btnPlay').onclick = ()=>{
+      if(playing){ return; }
+      if(!recsCache.length) compile();
+      ctx = new AudioCtx();
+      playing=true;
+      schedulePlay(recsCache);
+    };
+    $('#btnStop').onclick = stopPlay;
+
+    $('#btnLoadDemo1').onclick = ()=>{
+      $('#lyrics').value = `00:00 Am
+00:05 F
+00:10 C
+00:15 G
+00:20 Dm
+00:25 E
+00:30 Am`;
+      compile();
+    };
+    $('#btnLoadDemo2').onclick = ()=>{
+      $('#lyrics').value = `00:00 C
+00:04 G
+00:08 Am
+00:12 F
+00:16 C
+00:20 G
+00:24 F
+00:28 C`;
+      compile();
+    };
+    $('#btnClear').onclick = ()=>{ $('#lyrics').value=''; compile(); };
+
+    $('#btnCheckPremium').onclick = async ()=>{
+      try{
+        const user = await getUser();
+        const ok = await checkPremium(user.uid);
+        if(ok){ tierEl.textContent='Premium'; tierEl.style.background='#d6f6e8'; tierEl.style.color='#046b4f'; }
+        log(ok?'Tài khoản có Premium.':'Chưa có Premium.');
+      }catch(e){ log('Lỗi check premium: '+(e?.message||e)); }
+    };
+
+    // Khởi tạo mặc định
+    $('#btnLoadDemo1').click();
+  </script>
 </body>
 </html>
