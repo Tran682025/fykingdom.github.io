@@ -35,7 +35,7 @@
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
   <script>
     // ĐIỀN URL backend thật của Trẫm nếu có (Render/Vercel/Railway…)
-    const BACKEND_BASE = ""; // ví dụ: "https://pitransmusickingdom-backend.onrender.com"
+  const BACKEND_BASE = "https://pichordifykingdom-backend.onrender.com";
     const api = (path, data={}) => {
       if(!BACKEND_BASE) return Promise.resolve({ premium:false }); // fallback demo
       return fetch(`${BACKEND_BASE}${path}`, {
