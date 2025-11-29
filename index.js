@@ -8,7 +8,9 @@ const FY = {
     isPlaying: false,
     scrollLocked: false,
     isMuted: false,
-    lastVolume: 1
+    lastVolume: 1,
+    localFileSrc: null,
+    localFileName: null
   },
   els: {},
   customSongId: "custom-current",
@@ -21,7 +23,7 @@ const FY = {
       key: "G",
       mood: "Lo-fi / Worship",
       length: "3:45",
-      src: "",
+      src: "", // muốn có tiếng: upload MP3 và gán đường dẫn vào đây
       chords: `
 [Intro]
 G   D/F#   Em   C
@@ -69,7 +71,7 @@ G
       key: "Dm",
       mood: "Slow practice",
       length: "4:12",
-      src: "",
+      src: "", // tương tự: thêm URL MP3 nếu muốn có tiếng sẵn
       chords: `
 [Intro]
 Dm   Bb   F   C
@@ -126,6 +128,11 @@ FY.init = function () {
   this.els.customPattern = $("#fy-input-pattern");
   this.els.customMp3 = $("#fy-input-mp3");
   this.els.loadCustomButton = $("#fy-btn-load-to-player");
+
+  // MP3 file controls
+  this.els.mp3FileInput = $("#fy-input-mp3-file");
+  this.els.mp3SelectBtn = $("#fy-btn-select-mp3");
+  this.els.mp3LoadBtn = $("#fy-btn-load-mp3");
 
   // logo modal
   this.els.logoBtn = $("#mk-logo-btn");
@@ -235,6 +242,29 @@ FY.bindUI = function () {
     this.els.loadCustomButton.addEventListener("click", () =>
       this.loadCustomSong()
     );
+  }
+
+  // MP3 file select
+  if (this.els.mp3SelectBtn && this.els.mp3FileInput) {
+    this.els.mp3SelectBtn.addEventListener("click", () => {
+      this.els.mp3FileInput.click();
+    });
+    this.els.mp3FileInput.addEventListener("change", () => {
+      const file = this.els.mp3FileInput.files?.[0];
+      if (!file) return;
+      // Tạo URL local để audio play được
+      const blobUrl = URL.createObjectURL(file);
+      this.state.localFileSrc = blobUrl;
+      this.state.localFileName = file.name || "";
+      if (this.els.customMp3) {
+        this.els.customMp3.value = file.name || "";
+      }
+    });
+  }
+
+  // MP3 "Load" chip: chỉ cần đẩy sang player (giống Đưa sang player)
+  if (this.els.mp3LoadBtn) {
+    this.els.mp3LoadBtn.addEventListener("click", () => this.loadCustomSong());
   }
 
   // logo modal
@@ -361,12 +391,18 @@ FY.loadCustomSong = function () {
     (this.els.customLyrics && this.els.customLyrics.value.trim()) || "";
   const pattern =
     (this.els.customPattern && this.els.customPattern.value.trim()) || "";
-  const src =
+
+  const typedSrc =
     (this.els.customMp3 && this.els.customMp3.value.trim()) || "";
+  const src = this.state.localFileSrc || typedSrc;
 
   let autoTitle = "";
-  if (!titleInput && src) {
-    autoTitle = deriveNameFromUrl(src);
+  if (!titleInput) {
+    if (this.state.localFileName) {
+      autoTitle = prettifyFilename(this.state.localFileName);
+    } else if (typedSrc) {
+      autoTitle = deriveNameFromUrl(typedSrc);
+    }
   }
 
   const title = titleInput || autoTitle || "Bản custom";
@@ -465,9 +501,7 @@ FY.updateTime = function (force = false) {
   const ratio = duration ? current / duration : 0;
 
   if (this.els.timelineFill) {
-    this.els.timelineFill.style.width = `${
-      clamp01(ratio) * 100
-    }%`;
+    this.els.timelineFill.style.width = `${clamp01(ratio) * 100}%`;
   }
 
   if (this.els.timeCurrent) {
