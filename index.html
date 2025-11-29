@@ -255,6 +255,8 @@
       border:1px solid #4b5563;
       font-size:11px;
       color:var(--muted);
+      background:var(--panel-soft-2);
+      cursor:pointer;
     }
 
     .mini-note{
@@ -642,14 +644,15 @@
 
         <div class="section-label">File MP3 (tuỳ chọn)</div>
         <div class="mp3-row">
-          <input id="fy-input-mp3" class="input" placeholder="https://.../song.mp3 (có thể để trống)" />
-          <span class="chip">Chọn MP3</span>
-          <span class="chip">Load</span>
+          <input id="fy-input-mp3" class="input" placeholder="Dán link https://.../song.mp3 hoặc chọn file bên cạnh" />
+          <button type="button" id="fy-btn-select-mp3" class="chip">Chọn MP3</button>
+          <button type="button" id="fy-btn-load-mp3" class="chip">Load</button>
+          <input id="fy-input-mp3-file" type="file" accept="audio/*" style="display:none" />
         </div>
 
         <div class="row-between">
           <div class="mini-note">
-            Điền thông tin bên trên rồi bấm <b>“Đưa sang player ▶”</b> để tạo bản custom và nghe thử.
+            Dán link hoặc chọn file MP3, điền hợp âm rồi bấm <b>“Đưa sang player ▶”</b> để tạo bản custom và nghe thử.
           </div>
           <button id="fy-btn-load-to-player" class="link-btn primary">Đưa sang player ▶</button>
         </div>
