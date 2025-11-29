@@ -1,5 +1,11 @@
 // index.js
-// FYKINGDOM v0.2 — PiChordify demo (frontend only, no Pi SDK)
+// FYKINGDOM v0.3 — Pi Login & Pi Pay (DEV)
+
+const FY_CONFIG = {
+  // TODO: đổi thành backend thật của anh (ngrok / Render / VPS…)
+  backendUrl: "https://YOUR-FYKINGDOM-BACKEND-URL",
+  useSandbox: true
+};
 
 const FY = {
   audio: null,
@@ -11,7 +17,10 @@ const FY = {
     lastVolume: 1,
     localFileSrc: null,
     localFileName: null,
-    instrument: "Piano"
+    instrument: "Piano",
+    piReady: false,
+    piUser: null,
+    piAccessToken: null
   },
   els: {},
   customSongId: "custom-current",
@@ -24,7 +33,7 @@ const FY = {
       key: "G",
       mood: "Lo-fi / Worship",
       length: "3:45",
-      src: "", // thêm URL MP3 nếu muốn bản demo này có tiếng luôn
+      src: "", // gắn URL MP3 demo nếu muốn
       chords: `
 [Intro]
 G   D/F#   Em   C
@@ -135,9 +144,14 @@ FY.init = function () {
   this.els.logoModal = $("#mk-logo-modal");
   this.els.logoClose = $("#mk-logo-close");
 
-  this.els.logBox = $(".log-box");
+  this.els.logBox = $("#fy-log-box");
+  this.els.statusPill = $("#fy-pill-status");
   this.els.micBtn = $("#fy-btn-mic");
   this.els.recBtn = $("#fy-btn-rec");
+
+  this.els.piLoginBtn = $("#fy-btn-pi-login");
+  this.els.checkPremiumBtn = $("#fy-btn-check-premium");
+  this.els.piPayBtn = $("#fy-btn-pi-pay");
 
   this.audio = new Audio();
 
@@ -155,6 +169,7 @@ FY.init = function () {
   }
 
   this.bindUI();
+  this.initPi(); // thử init Pi SDK (nếu đang trong Pi Browser)
   this.updateMuteUI();
   this.renderLibrary();
   this.autoloadFirstSong();
@@ -266,10 +281,20 @@ FY.bindUI = function () {
   });
 
   this.els.micBtn?.addEventListener("click", () =>
-    this.log("🎤 Mic demo: tính năng thu giọng sẽ được bật ở bản sau.")
+    this.log("🎤 Mic demo: thu giọng sẽ được bật ở bản sau (cần quyền microphone).")
   );
   this.els.recBtn?.addEventListener("click", () =>
-    this.log("⏺ Rec demo: ghi âm & save take sẽ được thêm ở bản sau.")
+    this.log("⏺ Rec demo: ghi âm & lưu take sẽ được thêm ở bản sau.")
+  );
+
+  this.els.piLoginBtn?.addEventListener("click", () =>
+    this.handlePiLogin()
+  );
+  this.els.checkPremiumBtn?.addEventListener("click", () =>
+    this.handleCheckPremium()
+  );
+  this.els.piPayBtn?.addEventListener("click", () =>
+    this.handlePiPayment()
   );
 
   // auto-scroll loop
@@ -277,12 +302,37 @@ FY.bindUI = function () {
   const loop = (now) => {
     const delta = now - lastTime;
     lastTime = now;
-    if (this.state.scrollLocked && this.state.isPlaying && this.els.scrollContainer) {
+    if (
+      this.state.scrollLocked &&
+      this.state.isPlaying &&
+      this.els.scrollContainer
+    ) {
       this.els.scrollContainer.scrollTop += (delta / 1000) * 20;
     }
     requestAnimationFrame(loop);
   };
   requestAnimationFrame(loop);
+};
+
+FY.initPi = function () {
+  if (typeof window.Pi === "undefined") {
+    this.log("Pi SDK: không tìm thấy window.Pi — hãy mở trong Pi Browser để test Pi Login / Pi Pay.");
+    this.updateStatusPill("Pi SDK: not found", "#f97316");
+    return;
+  }
+  try {
+    window.Pi.init({
+      version: "2.0",
+      sandbox: !!FY_CONFIG.useSandbox
+    });
+    this.state.piReady = true;
+    const mode = FY_CONFIG.useSandbox ? "SANDBOX" : "LIVE";
+    this.log(`Pi SDK đã init (${mode}).`);
+    this.updateStatusPill(`Pi SDK: ready (${mode})`, "#22c55e");
+  } catch (err) {
+    this.log("Lỗi init Pi SDK: " + err.message);
+    this.updateStatusPill("Pi SDK: init error", "#ef4444");
+  }
 };
 
 FY.renderLibrary = function () {
@@ -473,6 +523,152 @@ FY.toggleMute = function () {
 FY.updateMuteUI = function () {
   if (this.els.muteBtn)
     this.els.muteBtn.textContent = this.state.isMuted ? "Unmute" : "Mute";
+};
+
+FY.updateStatusPill = function (text, color) {
+  if (!this.els.statusPill) return;
+  this.els.statusPill.textContent = text;
+  if (color) {
+    this.els.statusPill.style.borderColor = color;
+    this.els.statusPill.style.color = color;
+  }
+};
+
+FY.handlePiLogin = async function () {
+  if (typeof window.Pi === "undefined") {
+    this.log("Pi Login: không có Pi SDK — hãy mở trong Pi Browser.");
+    return;
+  }
+  try {
+    const scopes = ["username"];
+    const onIncompletePaymentFound = (payment) => {
+      this.log("Pi Login: tìm thấy payment chưa hoàn tất: " + payment.identifier);
+    };
+    const auth = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
+    this.state.piUser = auth.user;
+    this.state.piAccessToken = auth.accessToken;
+    this.log(`Pi Login OK: @${auth.user.username} (uid=${auth.user.uid}).`);
+
+    // Gửi accessToken lên backend (tuỳ chọn)
+    if (FY_CONFIG.backendUrl && FY_CONFIG.backendUrl.startsWith("http")) {
+      try {
+        await fetch(FY_CONFIG.backendUrl + "/pi/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            accessToken: auth.accessToken,
+            user: auth.user
+          })
+        });
+        this.log("Backend đã nhận Pi accessToken (endpoint /pi/auth).");
+      } catch (err) {
+        this.log("Không gọi được backend /pi/auth: " + err.message);
+      }
+    } else {
+      this.log("Chưa cấu hình BACKEND_URL, bỏ qua bước gửi accessToken.");
+    }
+  } catch (err) {
+    this.log("Pi Login lỗi: " + err.message);
+  }
+};
+
+FY.handleCheckPremium = async function () {
+  if (!this.state.piUser) {
+    this.log("Kiểm tra Premium: chưa Pi Login.");
+    return;
+  }
+  if (!FY_CONFIG.backendUrl || !FY_CONFIG.backendUrl.startsWith("http")) {
+    this.log("Kiểm tra Premium: chưa cấu hình BACKEND_URL.");
+    return;
+  }
+  try {
+    const res = await fetch(FY_CONFIG.backendUrl + "/pi/premium-status?uid=" + encodeURIComponent(this.state.piUser.uid));
+    const data = await res.json().catch(() => null);
+    if (data && data.isPremium) {
+      this.log("Premium: YES — user đã có quyền FYKINGDOM Premium.");
+    } else {
+      this.log("Premium: NO — user chưa kích hoạt Premium.");
+    }
+  } catch (err) {
+    this.log("Lỗi gọi backend /pi/premium-status: " + err.message);
+  }
+};
+
+FY.handlePiPayment = async function () {
+  if (typeof window.Pi === "undefined") {
+    this.log("Pi Payment: không có Pi SDK — hãy mở trong Pi Browser.");
+    return;
+  }
+  if (!FY_CONFIG.backendUrl || !FY_CONFIG.backendUrl.startsWith("http")) {
+    this.log("Pi Payment: chưa cấu hình BACKEND_URL, không thể gọi backend.");
+  }
+
+  const amount = 0.01; // Pi demo
+  const memo = "FYKINGDOM Premium demo";
+  const metadata = {
+    songId: this.state.currentSongId || null,
+    instrument: this.state.instrument || "Piano",
+    app: "FYKINGDOM",
+    tier: "premium-demo"
+  };
+
+  const onReadyForServerApproval = async (paymentId) => {
+    this.log("Payment: ready for server APPROVAL → " + paymentId);
+    if (!FY_CONFIG.backendUrl || !FY_CONFIG.backendUrl.startsWith("http")) {
+      this.log("Bỏ qua approve vì chưa có BACKEND_URL.");
+      return;
+    }
+    try {
+      await fetch(FY_CONFIG.backendUrl + "/pi/payments/approve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentId })
+      });
+      this.log("Backend: đã gọi /pi/payments/approve.");
+    } catch (err) {
+      this.log("Lỗi gọi backend approve: " + err.message);
+    }
+  };
+
+  const onReadyForServerCompletion = async (paymentId, txid) => {
+    this.log(`Payment: ready for COMPLETION → ${paymentId}, txid=${txid}`);
+    if (!FY_CONFIG.backendUrl || !FY_CONFIG.backendUrl.startsWith("http")) {
+      this.log("Bỏ qua complete vì chưa có BACKEND_URL.");
+      return;
+    }
+    try {
+      await fetch(FY_CONFIG.backendUrl + "/pi/payments/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentId, txid })
+      });
+      this.log("Backend: đã gọi /pi/payments/complete.");
+    } catch (err) {
+      this.log("Lỗi gọi backend complete: " + err.message);
+    }
+  };
+
+  const onCancel = (paymentId) => {
+    this.log("Payment: user CANCEL → " + paymentId);
+  };
+
+  const onError = (err, paymentId) => {
+    this.log(`Payment error [${paymentId || "n/a"}]: ${err}`);
+  };
+
+  try {
+    await window.Pi.createPayment(
+      { amount, memo, metadata },
+      {
+        onReadyForServerApproval,
+        onReadyForServerCompletion,
+        onCancel,
+        onError
+      }
+    );
+  } catch (err) {
+    this.log("Pi.createPayment lỗi: " + err.message);
+  }
 };
 
 FY.log = function (msg) {
