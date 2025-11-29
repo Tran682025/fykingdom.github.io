@@ -10,7 +10,8 @@ const FY = {
     isMuted: false,
     lastVolume: 1,
     localFileSrc: null,
-    localFileName: null
+    localFileName: null,
+    instrument: "Piano"
   },
   els: {},
   customSongId: "custom-current",
@@ -23,7 +24,7 @@ const FY = {
       key: "G",
       mood: "Lo-fi / Worship",
       length: "3:45",
-      src: "", // muốn có tiếng: upload MP3 và gán đường dẫn vào đây
+      src: "", // thêm URL MP3 nếu muốn bản demo này có tiếng luôn
       chords: `
 [Intro]
 G   D/F#   Em   C
@@ -71,7 +72,7 @@ G
       key: "Dm",
       mood: "Slow practice",
       length: "4:12",
-      src: "", // tương tự: thêm URL MP3 nếu muốn có tiếng sẵn
+      src: "",
       chords: `
 [Intro]
 Dm   Bb   F   C
@@ -96,13 +97,10 @@ Dm   Bb   F   C  (x∞)
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-document.addEventListener("DOMContentLoaded", () => {
-  FY.init();
-});
+document.addEventListener("DOMContentLoaded", () => FY.init());
 
 FY.init = function () {
-  // cache main UI
-  this.els.library = $("#fy-library");
+  // cache UI
   this.els.songList = $("#fy-song-list");
   this.els.title = $("#fy-song-title");
   this.els.meta = $("#fy-song-meta");
@@ -117,11 +115,9 @@ FY.init = function () {
   this.els.scrollToggle = $("#fy-scroll-toggle");
   this.els.scrollContainer = $("#fy-scroll-container") || this.els.chords;
 
-  // volume / mute
   this.els.volume = $("#fy-volume");
   this.els.muteBtn = $("#fy-btn-mute");
 
-  // custom editor inputs
   this.els.customTitle = $("#fy-input-title");
   this.els.customKey = $("#fy-select-key");
   this.els.customLyrics = $("#fy-input-lyrics");
@@ -129,28 +125,26 @@ FY.init = function () {
   this.els.customMp3 = $("#fy-input-mp3");
   this.els.loadCustomButton = $("#fy-btn-load-to-player");
 
-  // MP3 file controls
   this.els.mp3FileInput = $("#fy-input-mp3-file");
   this.els.mp3SelectBtn = $("#fy-btn-select-mp3");
   this.els.mp3LoadBtn = $("#fy-btn-load-mp3");
 
-  // logo modal
+  this.els.instrumentTabs = $$("#fy-instrument-tabs .tab");
+
   this.els.logoBtn = $("#mk-logo-btn");
   this.els.logoModal = $("#mk-logo-modal");
   this.els.logoClose = $("#mk-logo-close");
+
+  this.els.logBox = $(".log-box");
+  this.els.micBtn = $("#fy-btn-mic");
+  this.els.recBtn = $("#fy-btn-rec");
 
   this.audio = new Audio();
 
   // restore volume / mute
   const savedVol = parseFloat(localStorage.getItem("fy_volume"));
-  if (!isNaN(savedVol)) {
-    this.audio.volume = clamp01(savedVol);
-  } else {
-    this.audio.volume = 1;
-  }
-  if (this.els.volume) {
-    this.els.volume.value = this.audio.volume;
-  }
+  this.audio.volume = !isNaN(savedVol) ? clamp01(savedVol) : 1;
+  if (this.els.volume) this.els.volume.value = this.audio.volume;
   this.state.lastVolume = this.audio.volume || 1;
 
   const savedMuted = localStorage.getItem("fy_muted") === "1";
@@ -171,20 +165,13 @@ FY.bindUI = function () {
     this.els.songList.addEventListener("click", (e) => {
       const item = e.target.closest("[data-song-id]");
       if (!item) return;
-      const songId = item.getAttribute("data-song-id");
-      this.selectSong(songId, true);
+      this.selectSong(item.getAttribute("data-song-id"), true);
     });
   }
 
-  if (this.els.playBtn) {
-    this.els.playBtn.addEventListener("click", () => this.play());
-  }
-  if (this.els.pauseBtn) {
-    this.els.pauseBtn.addEventListener("click", () => this.pause());
-  }
-  if (this.els.stopBtn) {
-    this.els.stopBtn.addEventListener("click", () => this.stop());
-  }
+  this.els.playBtn?.addEventListener("click", () => this.play());
+  this.els.pauseBtn?.addEventListener("click", () => this.pause());
+  this.els.stopBtn?.addEventListener("click", () => this.stop());
 
   if (this.els.timeline) {
     this.els.timeline.addEventListener("click", (e) => {
@@ -204,22 +191,18 @@ FY.bindUI = function () {
     });
   }
 
-  if (this.audio) {
-    this.audio.addEventListener("timeupdate", () => this.updateTime());
-    this.audio.addEventListener("loadedmetadata", () => this.updateTime(true));
-    this.audio.addEventListener("ended", () => {
-      this.state.isPlaying = false;
-      this.updatePlayState();
-    });
-  }
+  this.audio?.addEventListener("timeupdate", () => this.updateTime());
+  this.audio?.addEventListener("loadedmetadata", () => this.updateTime(true));
+  this.audio?.addEventListener("ended", () => {
+    this.state.isPlaying = false;
+    this.updatePlayState();
+  });
 
-  // volume slider
   if (this.els.volume) {
     this.els.volume.addEventListener("input", (e) => {
       const v = clamp01(parseFloat(e.target.value) || 0);
       this.audio.volume = v;
       localStorage.setItem("fy_volume", String(v));
-
       if (v === 0) {
         this.state.isMuted = true;
         localStorage.setItem("fy_muted", "1");
@@ -232,88 +215,84 @@ FY.bindUI = function () {
     });
   }
 
-  // mute button
-  if (this.els.muteBtn) {
-    this.els.muteBtn.addEventListener("click", () => this.toggleMute());
-  }
+  this.els.muteBtn?.addEventListener("click", () => this.toggleMute());
 
-  // load custom song
-  if (this.els.loadCustomButton) {
-    this.els.loadCustomButton.addEventListener("click", () =>
-      this.loadCustomSong()
-    );
-  }
+  this.els.loadCustomButton?.addEventListener("click", () =>
+    this.loadCustomSong()
+  );
 
-  // MP3 file select
   if (this.els.mp3SelectBtn && this.els.mp3FileInput) {
-    this.els.mp3SelectBtn.addEventListener("click", () => {
-      this.els.mp3FileInput.click();
-    });
+    this.els.mp3SelectBtn.addEventListener("click", () =>
+      this.els.mp3FileInput.click()
+    );
     this.els.mp3FileInput.addEventListener("change", () => {
       const file = this.els.mp3FileInput.files?.[0];
       if (!file) return;
-      // Tạo URL local để audio play được
       const blobUrl = URL.createObjectURL(file);
       this.state.localFileSrc = blobUrl;
       this.state.localFileName = file.name || "";
-      if (this.els.customMp3) {
-        this.els.customMp3.value = file.name || "";
-      }
+      if (this.els.customMp3) this.els.customMp3.value = file.name || "";
+      this.log(`Đã chọn file MP3 local: ${file.name}`);
     });
   }
 
-  // MP3 "Load" chip: chỉ cần đẩy sang player (giống Đưa sang player)
-  if (this.els.mp3LoadBtn) {
-    this.els.mp3LoadBtn.addEventListener("click", () => this.loadCustomSong());
+  this.els.mp3LoadBtn?.addEventListener("click", () => this.loadCustomSong());
+
+  if (this.els.instrumentTabs?.length) {
+    this.els.instrumentTabs.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        this.els.instrumentTabs.forEach((b) =>
+          b.classList.remove("is-active")
+        );
+        btn.classList.add("is-active");
+        this.state.instrument = btn.getAttribute("data-instrument") || "Piano";
+        this.log(`Đã chọn nhạc cụ: ${this.state.instrument}`);
+      });
+    });
   }
 
-  // logo modal
   if (this.els.logoBtn && this.els.logoModal) {
-    this.els.logoBtn.addEventListener("click", () => {
-      this.els.logoModal.classList.add("is-open");
-    });
+    this.els.logoBtn.addEventListener("click", () =>
+      this.els.logoModal.classList.add("is-open")
+    );
   }
-  if (this.els.logoClose && this.els.logoModal) {
-    this.els.logoClose.addEventListener("click", () => {
+  this.els.logoClose?.addEventListener("click", () =>
+    this.els.logoModal.classList.remove("is-open")
+  );
+  this.els.logoModal?.addEventListener("click", (e) => {
+    if (e.target.classList.contains("logo-modal-backdrop")) {
       this.els.logoModal.classList.remove("is-open");
-    });
-  }
-  if (this.els.logoModal) {
-    this.els.logoModal.addEventListener("click", (e) => {
-      if (e.target.classList.contains("logo-modal-backdrop")) {
-        this.els.logoModal.classList.remove("is-open");
-      }
-    });
-  }
+    }
+  });
+
+  this.els.micBtn?.addEventListener("click", () =>
+    this.log("🎤 Mic demo: tính năng thu giọng sẽ được bật ở bản sau.")
+  );
+  this.els.recBtn?.addEventListener("click", () =>
+    this.log("⏺ Rec demo: ghi âm & save take sẽ được thêm ở bản sau.")
+  );
 
   // auto-scroll loop
   let lastTime = performance.now();
-  const scrollLoop = (now) => {
+  const loop = (now) => {
     const delta = now - lastTime;
     lastTime = now;
-
-    if (
-      this.state.scrollLocked &&
-      this.state.isPlaying &&
-      this.els.scrollContainer
-    ) {
+    if (this.state.scrollLocked && this.state.isPlaying && this.els.scrollContainer) {
       this.els.scrollContainer.scrollTop += (delta / 1000) * 20;
     }
-
-    requestAnimationFrame(scrollLoop);
+    requestAnimationFrame(loop);
   };
-  requestAnimationFrame(scrollLoop);
+  requestAnimationFrame(loop);
 };
 
 FY.renderLibrary = function () {
   if (!this.els.songList) return;
-
   this.els.songList.innerHTML = "";
   this.songs.forEach((song) => {
     const li = document.createElement("button");
     li.className = "fy-song-item";
     li.type = "button";
-    li.setAttribute("data-song-id", song.id);
+    li.dataset.songId = song.id;
     li.innerHTML = `
       <div class="fy-song-main">
         <span class="fy-song-title">${song.title}</span>
@@ -331,8 +310,7 @@ FY.renderLibrary = function () {
 
 FY.autoloadFirstSong = function () {
   if (!this.songs.length) return;
-  const first = this.songs[0];
-  this.selectSong(first.id, false);
+  this.selectSong(this.songs[0].id, false);
 };
 
 FY.selectSong = function (songId, autoplay = false) {
@@ -341,27 +319,18 @@ FY.selectSong = function (songId, autoplay = false) {
 
   this.state.currentSongId = songId;
 
-  if (this.els.title) {
-    this.els.title.textContent = song.title;
-  }
-  if (this.els.meta) {
-    this.els.meta.textContent = `${song.artist} • Key ${song.key} • ${song.bpm} BPM • ${song.length}`;
-  }
+  this.els.title && (this.els.title.textContent = song.title);
+  this.els.meta &&
+    (this.els.meta.textContent = `${song.artist} • Key ${song.key} • ${song.bpm} BPM • ${song.length}`);
 
   if (this.els.chords) {
     this.els.chords.textContent = song.chords;
-    if (this.els.scrollContainer) {
-      this.els.scrollContainer.scrollTop = 0;
-    }
+    this.els.scrollContainer && (this.els.scrollContainer.scrollTop = 0);
   }
 
   if (this.els.songList) {
     $$(".fy-song-item", this.els.songList).forEach((btn) => {
-      if (btn.getAttribute("data-song-id") === songId) {
-        btn.classList.add("is-active");
-      } else {
-        btn.classList.remove("is-active");
-      }
+      btn.classList.toggle("is-active", btn.dataset.songId === songId);
     });
   }
 
@@ -374,9 +343,8 @@ FY.selectSong = function (songId, autoplay = false) {
     }
   }
 
-  if (autoplay) {
-    this.play();
-  } else {
+  if (autoplay) this.play();
+  else {
     this.state.isPlaying = false;
     this.updatePlayState();
     this.updateTime(true);
@@ -384,36 +352,23 @@ FY.selectSong = function (songId, autoplay = false) {
 };
 
 FY.loadCustomSong = function () {
-  const titleInput =
-    (this.els.customTitle && this.els.customTitle.value.trim()) || "";
+  const titleInput = this.els.customTitle?.value.trim() || "";
   const key = this.els.customKey ? this.els.customKey.value : "?";
-  const lyrics =
-    (this.els.customLyrics && this.els.customLyrics.value.trim()) || "";
-  const pattern =
-    (this.els.customPattern && this.els.customPattern.value.trim()) || "";
-
-  const typedSrc =
-    (this.els.customMp3 && this.els.customMp3.value.trim()) || "";
+  const lyrics = this.els.customLyrics?.value.trim() || "";
+  const pattern = this.els.customPattern?.value.trim() || "";
+  const typedSrc = this.els.customMp3?.value.trim() || "";
   const src = this.state.localFileSrc || typedSrc;
 
   let autoTitle = "";
   if (!titleInput) {
-    if (this.state.localFileName) {
-      autoTitle = prettifyFilename(this.state.localFileName);
-    } else if (typedSrc) {
-      autoTitle = deriveNameFromUrl(typedSrc);
-    }
+    if (this.state.localFileName) autoTitle = prettifyFilename(this.state.localFileName);
+    else if (typedSrc) autoTitle = deriveNameFromUrl(typedSrc);
   }
-
   const title = titleInput || autoTitle || "Bản custom";
 
   let chords = "";
-  if (lyrics) {
-    chords += "[Lyrics + Chords]\n" + lyrics + "\n\n";
-  }
-  if (pattern) {
-    chords += "[Pattern]\n" + pattern + "\n";
-  }
+  if (lyrics) chords += "[Lyrics + Chords]\n" + lyrics + "\n\n";
+  if (pattern) chords += "[Pattern]\n" + pattern + "\n";
   if (!chords) {
     chords =
       "Chưa có nội dung hợp âm.\nHãy điền lời + hợp âm hoặc pattern ở panel bên trái rồi bấm 'Đưa sang player'.";
@@ -422,7 +377,7 @@ FY.loadCustomSong = function () {
   const song = {
     id: this.customSongId,
     title,
-    artist: "FYKINGDOM user",
+    artist: `FYKINGDOM user (${this.state.instrument || "Piano"})`,
     bpm: 80,
     key,
     mood: "Custom",
@@ -432,19 +387,16 @@ FY.loadCustomSong = function () {
   };
 
   const idx = this.songs.findIndex((s) => s.id === this.customSongId);
-  if (idx >= 0) {
-    this.songs[idx] = song;
-  } else {
-    this.songs.unshift(song);
-  }
+  if (idx >= 0) this.songs[idx] = song;
+  else this.songs.unshift(song);
 
   this.renderLibrary();
   this.selectSong(this.customSongId, true);
+  this.log(`Đã tạo bản custom với nhạc cụ ${this.state.instrument}.`);
 };
 
 FY.play = function () {
   if (!this.audio) return;
-
   if (this.audio.src) {
     this.audio
       .play()
@@ -452,9 +404,7 @@ FY.play = function () {
         this.state.isPlaying = true;
         this.updatePlayState();
       })
-      .catch((err) => {
-        console.warn("Cannot play audio:", err);
-      });
+      .catch((err) => console.warn("Cannot play audio:", err));
   } else {
     this.state.isPlaying = true;
     this.updatePlayState();
@@ -478,43 +428,29 @@ FY.stop = function () {
 };
 
 FY.updatePlayState = function () {
-  if (this.els.playBtn) {
-    this.els.playBtn.disabled = this.state.isPlaying;
-  }
-  if (this.els.pauseBtn) {
-    this.els.pauseBtn.disabled = !this.state.isPlaying;
-  }
+  if (this.els.playBtn) this.els.playBtn.disabled = this.state.isPlaying;
+  if (this.els.pauseBtn) this.els.pauseBtn.disabled = !this.state.isPlaying;
 };
 
 FY.updateTime = function (force = false) {
   if (!this.audio && !force) return;
-
-  const current =
-    this.audio && this.audio.currentTime ? this.audio.currentTime : 0;
+  const current = this.audio?.currentTime || 0;
   const duration =
-    this.audio &&
-    isFinite(this.audio.duration) &&
-    this.audio.duration > 0
+    this.audio && isFinite(this.audio.duration) && this.audio.duration > 0
       ? this.audio.duration
       : 240;
-
   const ratio = duration ? current / duration : 0;
 
-  if (this.els.timelineFill) {
+  if (this.els.timelineFill)
     this.els.timelineFill.style.width = `${clamp01(ratio) * 100}%`;
-  }
-
-  if (this.els.timeCurrent) {
+  if (this.els.timeCurrent)
     this.els.timeCurrent.textContent = formatTime(current);
-  }
-  if (this.els.timeTotal) {
+  if (this.els.timeTotal)
     this.els.timeTotal.textContent = formatTime(duration);
-  }
 };
 
 FY.toggleMute = function () {
   if (!this.audio || !this.els.volume) return;
-
   if (this.state.isMuted) {
     const v = this.state.lastVolume > 0 ? this.state.lastVolume : 0.8;
     this.audio.volume = clamp01(v);
@@ -531,48 +467,49 @@ FY.toggleMute = function () {
     localStorage.setItem("fy_volume", "0");
     localStorage.setItem("fy_muted", "1");
   }
-
   this.updateMuteUI();
 };
 
 FY.updateMuteUI = function () {
-  if (!this.els.muteBtn) return;
-  this.els.muteBtn.textContent = this.state.isMuted ? "Unmute" : "Mute";
+  if (this.els.muteBtn)
+    this.els.muteBtn.textContent = this.state.isMuted ? "Unmute" : "Mute";
+};
+
+FY.log = function (msg) {
+  if (!this.els.logBox) return;
+  const base = this.els.logBox.value || "Log:";
+  this.els.logBox.value = base.replace(/\s*$/, "") + "\n" + msg;
+  this.els.logBox.scrollTop = this.els.logBox.scrollHeight;
 };
 
 /* helpers */
-
 function formatTime(sec) {
   sec = Math.max(0, Math.floor(sec || 0));
   const m = Math.floor(sec / 60);
   const s = sec % 60;
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
-
 function clamp01(v) {
   if (isNaN(v)) return 0;
   if (v < 0) return 0;
   if (v > 1) return 1;
   return v;
 }
-
 function deriveNameFromUrl(url) {
   try {
     const u = new URL(url);
     return prettifyFilename(u.pathname);
-  } catch (e) {
+  } catch {
     return prettifyFilename(url);
   }
 }
-
 function prettifyFilename(path) {
   if (!path) return "";
   let name = path.split("/").filter(Boolean).pop() || "";
   name = name.split("?")[0].split("#")[0];
-  name = name.replace(/\.[^/.]+$/, ""); // remove extension
+  name = name.replace(/\.[^/.]+$/, "");
   if (!name) return "";
-  name = name.replace(/[_\-]+/g, " ");
-  name = name.replace(/\s+/g, " ").trim();
+  name = name.replace(/[_\-]+/g, " ").replace(/\s+/g, " ").trim();
   if (!name) return "";
   return name
     .split(" ")
