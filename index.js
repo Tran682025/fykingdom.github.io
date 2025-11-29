@@ -1,15 +1,17 @@
 // index.js
-// FYKINGDOM V01 – PiChordify demo (frontend only, no Pi Pay, no wallet)
+// FYKINGDOM v0.2 — PiChordify demo (frontend only, no Pi SDK)
 
-// Simple namespace to avoid globals
 const FY = {
   audio: null,
   state: {
     currentSongId: null,
     isPlaying: false,
-    scrollLocked: false
+    scrollLocked: false,
+    isMuted: false,
+    lastVolume: 1
   },
   els: {},
+  customSongId: "custom-current",
   songs: [
     {
       id: "tran-demo-01",
@@ -19,7 +21,6 @@ const FY = {
       key: "G",
       mood: "Lo-fi / Worship",
       length: "3:45",
-      // You can swap this with a real MP3/OGG URL later
       src: "",
       chords: `
 [Intro]
@@ -90,7 +91,6 @@ Dm   Bb   F   C  (x∞)
   ]
 };
 
-// Shortcuts
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 FY.init = function () {
-  // Cache elements – nếu trong HTML thiếu cái nào cũng không sao, code sẽ bỏ qua.
+  // cache main UI
   this.els.library = $("#fy-library");
   this.els.songList = $("#fy-song-list");
   this.els.title = $("#fy-song-title");
@@ -115,8 +115,46 @@ FY.init = function () {
   this.els.scrollToggle = $("#fy-scroll-toggle");
   this.els.scrollContainer = $("#fy-scroll-container") || this.els.chords;
 
+  // volume / mute
+  this.els.volume = $("#fy-volume");
+  this.els.muteBtn = $("#fy-btn-mute");
+
+  // custom editor inputs
+  this.els.customTitle = $("#fy-input-title");
+  this.els.customKey = $("#fy-select-key");
+  this.els.customLyrics = $("#fy-input-lyrics");
+  this.els.customPattern = $("#fy-input-pattern");
+  this.els.customMp3 = $("#fy-input-mp3");
+  this.els.loadCustomButton = $("#fy-btn-load-to-player");
+
+  // logo modal
+  this.els.logoBtn = $("#mk-logo-btn");
+  this.els.logoModal = $("#mk-logo-modal");
+  this.els.logoClose = $("#mk-logo-close");
+
   this.audio = new Audio();
+
+  // restore volume / mute
+  const savedVol = parseFloat(localStorage.getItem("fy_volume"));
+  if (!isNaN(savedVol)) {
+    this.audio.volume = clamp01(savedVol);
+  } else {
+    this.audio.volume = 1;
+  }
+  if (this.els.volume) {
+    this.els.volume.value = this.audio.volume;
+  }
+  this.state.lastVolume = this.audio.volume || 1;
+
+  const savedMuted = localStorage.getItem("fy_muted") === "1";
+  if (savedMuted) {
+    this.state.isMuted = true;
+    this.audio.volume = 0;
+    if (this.els.volume) this.els.volume.value = 0;
+  }
+
   this.bindUI();
+  this.updateMuteUI();
   this.renderLibrary();
   this.autoloadFirstSong();
 };
@@ -146,7 +184,7 @@ FY.bindUI = function () {
       if (!this.audio || !this.audio.duration) return;
       const rect = this.els.timeline.getBoundingClientRect();
       const ratio = (e.clientX - rect.left) / rect.width;
-      this.audio.currentTime = ratio * this.audio.duration;
+      this.audio.currentTime = clamp01(ratio) * this.audio.duration;
     });
   }
 
@@ -168,7 +206,57 @@ FY.bindUI = function () {
     });
   }
 
-  // Simple auto-scroll loop
+  // volume slider
+  if (this.els.volume) {
+    this.els.volume.addEventListener("input", (e) => {
+      const v = clamp01(parseFloat(e.target.value) || 0);
+      this.audio.volume = v;
+      localStorage.setItem("fy_volume", String(v));
+
+      if (v === 0) {
+        this.state.isMuted = true;
+        localStorage.setItem("fy_muted", "1");
+      } else {
+        this.state.lastVolume = v;
+        this.state.isMuted = false;
+        localStorage.setItem("fy_muted", "0");
+      }
+      this.updateMuteUI();
+    });
+  }
+
+  // mute button
+  if (this.els.muteBtn) {
+    this.els.muteBtn.addEventListener("click", () => this.toggleMute());
+  }
+
+  // load custom song
+  if (this.els.loadCustomButton) {
+    this.els.loadCustomButton.addEventListener("click", () =>
+      this.loadCustomSong()
+    );
+  }
+
+  // logo modal
+  if (this.els.logoBtn && this.els.logoModal) {
+    this.els.logoBtn.addEventListener("click", () => {
+      this.els.logoModal.classList.add("is-open");
+    });
+  }
+  if (this.els.logoClose && this.els.logoModal) {
+    this.els.logoClose.addEventListener("click", () => {
+      this.els.logoModal.classList.remove("is-open");
+    });
+  }
+  if (this.els.logoModal) {
+    this.els.logoModal.addEventListener("click", (e) => {
+      if (e.target.classList.contains("logo-modal-backdrop")) {
+        this.els.logoModal.classList.remove("is-open");
+      }
+    });
+  }
+
+  // auto-scroll loop
   let lastTime = performance.now();
   const scrollLoop = (now) => {
     const delta = now - lastTime;
@@ -179,7 +267,7 @@ FY.bindUI = function () {
       this.state.isPlaying &&
       this.els.scrollContainer
     ) {
-      this.els.scrollContainer.scrollTop += (delta / 1000) * 20; // 20px per second
+      this.els.scrollContainer.scrollTop += (delta / 1000) * 20;
     }
 
     requestAnimationFrame(scrollLoop);
@@ -191,7 +279,6 @@ FY.renderLibrary = function () {
   if (!this.els.songList) return;
 
   this.els.songList.innerHTML = "";
-
   this.songs.forEach((song) => {
     const li = document.createElement("button");
     li.className = "fy-song-item";
@@ -227,7 +314,6 @@ FY.selectSong = function (songId, autoplay = false) {
   if (this.els.title) {
     this.els.title.textContent = song.title;
   }
-
   if (this.els.meta) {
     this.els.meta.textContent = `${song.artist} • Key ${song.key} • ${song.bpm} BPM • ${song.length}`;
   }
@@ -239,7 +325,6 @@ FY.selectSong = function (songId, autoplay = false) {
     }
   }
 
-  // Highlight current
   if (this.els.songList) {
     $$(".fy-song-item", this.els.songList).forEach((btn) => {
       if (btn.getAttribute("data-song-id") === songId) {
@@ -250,12 +335,10 @@ FY.selectSong = function (songId, autoplay = false) {
     });
   }
 
-  // Audio – only if src exists
   if (this.audio) {
     if (song.src) {
       this.audio.src = song.src;
     } else {
-      // Nếu chưa có file audio, dùng fake length 240s để demo timeline
       this.audio.removeAttribute("src");
       this.audio.currentTime = 0;
     }
@@ -268,6 +351,59 @@ FY.selectSong = function (songId, autoplay = false) {
     this.updatePlayState();
     this.updateTime(true);
   }
+};
+
+FY.loadCustomSong = function () {
+  const titleInput =
+    (this.els.customTitle && this.els.customTitle.value.trim()) || "";
+  const key = this.els.customKey ? this.els.customKey.value : "?";
+  const lyrics =
+    (this.els.customLyrics && this.els.customLyrics.value.trim()) || "";
+  const pattern =
+    (this.els.customPattern && this.els.customPattern.value.trim()) || "";
+  const src =
+    (this.els.customMp3 && this.els.customMp3.value.trim()) || "";
+
+  let autoTitle = "";
+  if (!titleInput && src) {
+    autoTitle = deriveNameFromUrl(src);
+  }
+
+  const title = titleInput || autoTitle || "Bản custom";
+
+  let chords = "";
+  if (lyrics) {
+    chords += "[Lyrics + Chords]\n" + lyrics + "\n\n";
+  }
+  if (pattern) {
+    chords += "[Pattern]\n" + pattern + "\n";
+  }
+  if (!chords) {
+    chords =
+      "Chưa có nội dung hợp âm.\nHãy điền lời + hợp âm hoặc pattern ở panel bên trái rồi bấm 'Đưa sang player'.";
+  }
+
+  const song = {
+    id: this.customSongId,
+    title,
+    artist: "FYKINGDOM user",
+    bpm: 80,
+    key,
+    mood: "Custom",
+    length: src ? "MP3" : "Demo",
+    src,
+    chords
+  };
+
+  const idx = this.songs.findIndex((s) => s.id === this.customSongId);
+  if (idx >= 0) {
+    this.songs[idx] = song;
+  } else {
+    this.songs.unshift(song);
+  }
+
+  this.renderLibrary();
+  this.selectSong(this.customSongId, true);
 };
 
 FY.play = function () {
@@ -284,7 +420,6 @@ FY.play = function () {
         console.warn("Cannot play audio:", err);
       });
   } else {
-    // No audio file – giả lập play state cho demo
     this.state.isPlaying = true;
     this.updatePlayState();
   }
@@ -318,16 +453,21 @@ FY.updatePlayState = function () {
 FY.updateTime = function (force = false) {
   if (!this.audio && !force) return;
 
-  const current = this.audio && this.audio.currentTime ? this.audio.currentTime : 0;
+  const current =
+    this.audio && this.audio.currentTime ? this.audio.currentTime : 0;
   const duration =
-    this.audio && isFinite(this.audio.duration) && this.audio.duration > 0
+    this.audio &&
+    isFinite(this.audio.duration) &&
+    this.audio.duration > 0
       ? this.audio.duration
-      : 240; // giả lập 4 phút nếu chưa có metadata
+      : 240;
 
   const ratio = duration ? current / duration : 0;
 
   if (this.els.timelineFill) {
-    this.els.timelineFill.style.width = `${Math.min(Math.max(ratio, 0), 1) * 100}%`;
+    this.els.timelineFill.style.width = `${
+      clamp01(ratio) * 100
+    }%`;
   }
 
   if (this.els.timeCurrent) {
@@ -338,9 +478,70 @@ FY.updateTime = function (force = false) {
   }
 };
 
+FY.toggleMute = function () {
+  if (!this.audio || !this.els.volume) return;
+
+  if (this.state.isMuted) {
+    const v = this.state.lastVolume > 0 ? this.state.lastVolume : 0.8;
+    this.audio.volume = clamp01(v);
+    this.els.volume.value = this.audio.volume;
+    this.state.isMuted = false;
+    localStorage.setItem("fy_volume", String(this.audio.volume));
+    localStorage.setItem("fy_muted", "0");
+  } else {
+    this.state.lastVolume =
+      this.audio.volume > 0 ? this.audio.volume : this.state.lastVolume || 0.8;
+    this.audio.volume = 0;
+    this.els.volume.value = 0;
+    this.state.isMuted = true;
+    localStorage.setItem("fy_volume", "0");
+    localStorage.setItem("fy_muted", "1");
+  }
+
+  this.updateMuteUI();
+};
+
+FY.updateMuteUI = function () {
+  if (!this.els.muteBtn) return;
+  this.els.muteBtn.textContent = this.state.isMuted ? "Unmute" : "Mute";
+};
+
+/* helpers */
+
 function formatTime(sec) {
   sec = Math.max(0, Math.floor(sec || 0));
   const m = Math.floor(sec / 60);
   const s = sec % 60;
   return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+function clamp01(v) {
+  if (isNaN(v)) return 0;
+  if (v < 0) return 0;
+  if (v > 1) return 1;
+  return v;
+}
+
+function deriveNameFromUrl(url) {
+  try {
+    const u = new URL(url);
+    return prettifyFilename(u.pathname);
+  } catch (e) {
+    return prettifyFilename(url);
+  }
+}
+
+function prettifyFilename(path) {
+  if (!path) return "";
+  let name = path.split("/").filter(Boolean).pop() || "";
+  name = name.split("?")[0].split("#")[0];
+  name = name.replace(/\.[^/.]+$/, ""); // remove extension
+  if (!name) return "";
+  name = name.replace(/[_\-]+/g, " ");
+  name = name.replace(/\s+/g, " ").trim();
+  if (!name) return "";
+  return name
+    .split(" ")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
 }
