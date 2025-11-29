@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PiChordify Kingdom — FYKINGDOM v0.1</title>
+  <title>PiChordify Kingdom — FYKINGDOM v0.2</title>
 
   <style>
     :root{
@@ -25,12 +25,9 @@
     body{
       min-height:100vh;
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;
-      background:
-        radial-gradient(circle at top,#4c1d95 0,#020617 55%,#000 100%);
+      background:radial-gradient(circle at top,#4c1d95 0,#020617 55%,#000 100%);
       color:var(--text);
     }
-
-    a{color:inherit;}
 
     .shell{
       max-width:1180px;
@@ -55,7 +52,7 @@
       flex-direction:column;
       gap:6px;
     }
-    .hero-logo{
+    .hero-logo-text{
       font-size:13px;
       letter-spacing:.16em;
       text-transform:uppercase;
@@ -67,7 +64,13 @@
     }
     .hero-sub{
       font-size:14px;
-      opacity:.95;
+      opacity:.96;
+    }
+
+    .hero-right{
+      display:flex;
+      align-items:center;
+      gap:10px;
     }
     .hero-badge{
       min-width:190px;
@@ -82,14 +85,42 @@
     .hero-badge span:first-child{font-weight:600;}
     .hero-badge span:last-child{color:#c4b5fd;}
 
+    .hero-logo-btn{
+      border:none;
+      padding:0;
+      background:transparent;
+      border-radius:999px;
+      overflow:hidden;
+      width:56px;
+      height:56px;
+      flex:0 0 56px;
+      box-shadow:0 10px 25px rgba(15,23,42,.9);
+      cursor:pointer;
+      transition:transform .22s ease, box-shadow .22s ease;
+    }
+    .hero-logo-btn img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .hero-logo-btn:hover{
+      transform:translateY(-2px) scale(1.05);
+      box-shadow:0 16px 35px rgba(15,23,42,1);
+    }
+
     @media (max-width:860px){
       .hero{
         flex-direction:column;
         align-items:flex-start;
       }
+      .hero-right{
+        width:100%;
+        justify-content:space-between;
+      }
     }
 
-    /* LAYOUT MAIN */
+    /* MAIN LAYOUT */
     .layout{
       display:grid;
       grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);
@@ -107,7 +138,7 @@
       box-shadow:var(--shadow-main);
     }
 
-    /* LEFT PANEL – EDITOR LOOK */
+    /* LEFT PANEL – EDITOR */
     .panel h2{
       font-size:17px;
       margin-bottom:10px;
@@ -347,7 +378,33 @@
       justify-content:space-between;
       font-size:11px;
       color:var(--muted);
+      margin-bottom:8px;
+    }
+
+    /* volume row */
+    #fy-volume-row{
+      display:flex;
+      align-items:center;
+      gap:10px;
       margin-bottom:10px;
+    }
+    #fy-volume-label{
+      font-size:11px;
+      color:var(--muted);
+      min-width:52px;
+    }
+    #fy-volume{
+      flex:1;
+      accent-color:#38bdf8;
+    }
+    #fy-btn-mute{
+      padding:6px 12px;
+      border-radius:999px;
+      border:none;
+      background:var(--panel-soft);
+      color:var(--text);
+      font-size:12px;
+      cursor:pointer;
     }
 
     #fy-controls{
@@ -464,6 +521,51 @@
       padding:8px 9px;
       resize:vertical;
     }
+
+    /* Logo modal */
+    .logo-modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:40;
+    }
+    .logo-modal.is-open{display:flex;}
+    .logo-modal-backdrop{
+      position:absolute;
+      inset:0;
+      background:rgba(15,23,42,.85);
+      backdrop-filter:blur(8px);
+    }
+    .logo-modal-content{
+      position:relative;
+      max-width:90vw;
+      max-height:90vh;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:0 30px 80px rgba(0,0,0,.9);
+      border:1px solid #4c1d95;
+      z-index:41;
+    }
+    .logo-modal-content img{
+      display:block;
+      max-width:100%;
+      max-height:100%;
+      object-fit:contain;
+    }
+    .logo-modal-close{
+      position:absolute;
+      top:8px;
+      right:10px;
+      border:none;
+      border-radius:999px;
+      padding:4px 9px;
+      font-size:13px;
+      cursor:pointer;
+      background:rgba(15,23,42,.92);
+      color:#e5e7eb;
+    }
   </style>
 </head>
 
@@ -473,22 +575,28 @@
     <!-- HERO -->
     <section class="hero">
       <div class="hero-main">
-        <div class="hero-logo">MUSICKINGDOM</div>
+        <div class="hero-logo-text">MUSICKINGDOM</div>
         <div class="hero-title">PiChordify Kingdom</div>
         <div class="hero-sub">
-          Công cụ gợi ý hợp âm & luyện hát trong hệ sinh thái Pi – bản demo chạy thuần frontend.
+          Công cụ gợi ý hợp âm & luyện hát trong hệ sinh thái Pi – bản FYKINGDOM chạy thuần frontend.
         </div>
       </div>
-      <div class="hero-badge">
-        <span>FYKINGDOM v0.1 – Frontend only</span>
-        <span>Không Pi Login, không Pi Pay, không backend. Dùng thử logic và giao diện.</span>
+
+      <div class="hero-right">
+        <div class="hero-badge">
+          <span>FYKINGDOM v0.2</span>
+          <span>Golden Turtle Edition — frontend only.</span>
+        </div>
+        <button class="hero-logo-btn" id="mk-logo-btn" title="Musickingdom Golden Turtle">
+          <img src="assets/musickingdom-golden-turtle.jpg" alt="Musickingdom Golden Turtle" />
+        </button>
       </div>
     </section>
 
     <!-- MAIN LAYOUT -->
     <main class="layout">
 
-      <!-- LEFT: EDITOR LOOK (TĨNH) -->
+      <!-- LEFT: EDITOR -->
       <section class="panel">
         <h2>Bản nhạc mới (giao diện demo)</h2>
 
@@ -502,45 +610,48 @@
         <div class="row">
           <div>
             <div class="section-label">Tên bài</div>
-            <input class="input" placeholder="Ví dụ: Tran682025 – Demo Jam" />
+            <input id="fy-input-title" class="input" placeholder="Ví dụ: Tran682025 – Demo Jam" />
           </div>
           <div>
             <div class="section-label">Giọng (key)</div>
-            <select class="select">
-              <option>G</option>
-              <option>C</option>
-              <option>D</option>
-              <option>Em</option>
-              <option>Am</option>
+            <select id="fy-select-key" class="select">
+              <option value="G">G</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+              <option value="Em">Em</option>
+              <option value="Am">Am</option>
             </select>
           </div>
           <div class="pill-indicator">Tiến trình: I – V – vi – IV</div>
         </div>
 
         <div class="section-label">Lời + hợp âm (mỗi dòng có mốc thời gian)</div>
-        <textarea class="textarea" placeholder="00:12   Em   D / ..."></textarea>
+        <textarea id="fy-input-lyrics" class="textarea" placeholder="00:12   Em   D / ..."></textarea>
 
         <div class="section-label">Mẫu hợp âm cho cả bài (pattern)</div>
-        <textarea class="textarea" placeholder="Ví dụ: C  G  Am  F  |  F  G  Em  Am"></textarea>
+        <textarea id="fy-input-pattern" class="textarea" placeholder="Ví dụ: C  G  Am  F  |  F  G  Em  Am"></textarea>
         <div class="caption">
-          Pattern sẽ lặp từ đầu đến cuối bài, mỗi hợp âm chia đều theo chiều dài MP3.
-          FYKINGDOM v0.1 chỉ minh hoạ giao diện, chưa phân tích file thật.
+          Pattern sẽ lặp từ đầu đến cuối bài, mỗi hợp âm chia đều theo chiều dài MP3.  
+          FYKINGDOM v0.2 cho phép đẩy nội dung này sang player bên phải để tập thử.
         </div>
 
         <div class="row-between">
-          <button class="link-btn primary">Auto fill</button>
-          <button class="link-btn">Tự điền hợp âm theo pattern (demo)</button>
+          <button class="link-btn primary">Auto fill (demo)</button>
+          <button class="link-btn">Tự điền hợp âm theo pattern (chưa bật)</button>
         </div>
 
-        <div class="section-label">File MP3</div>
+        <div class="section-label">File MP3 (tuỳ chọn)</div>
         <div class="mp3-row">
-          <input class="input" placeholder="https://.../song.mp3 (chỉ minh hoạ, chưa phân tích)" />
+          <input id="fy-input-mp3" class="input" placeholder="https://.../song.mp3 (có thể để trống)" />
           <span class="chip">Chọn MP3</span>
           <span class="chip">Load</span>
         </div>
 
-        <div class="mini-note">
-          Panel này chỉ để mô phỏng Musickingdom; logic thật sẽ gắn ở phiên bản sau.
+        <div class="row-between">
+          <div class="mini-note">
+            Điền thông tin bên trên rồi bấm <b>“Đưa sang player ▶”</b> để tạo bản custom và nghe thử.
+          </div>
+          <button id="fy-btn-load-to-player" class="link-btn primary">Đưa sang player ▶</button>
         </div>
       </section>
 
@@ -549,7 +660,7 @@
         <header>
           <div id="fy-player-title">FYKINGDOM Player</div>
           <div id="fy-player-note">
-            Chọn một bản demo ở danh sách bên trái để xem hợp âm và chạy auto-scroll.
+            Chọn một bản demo ở danh sách bên trái, hoặc tạo bản custom từ panel “Bản nhạc mới”.
           </div>
         </header>
 
@@ -573,6 +684,12 @@
               <span id="fy-time-total">0:00</span>
             </div>
 
+            <div id="fy-volume-row">
+              <span id="fy-volume-label">Volume</span>
+              <input id="fy-volume" type="range" min="0" max="1" step="0.01" value="1" />
+              <button id="fy-btn-mute">Mute</button>
+            </div>
+
             <div id="fy-controls">
               <button id="fy-btn-play">▶ Play</button>
               <button id="fy-btn-pause" disabled>⏸ Pause</button>
@@ -586,13 +703,13 @@
             </div>
 
             <div class="fy-note">
-              Player hiện chỉ dùng cho demo: nếu chưa gắn file MP3 thật, thanh thời gian sẽ giả lập độ dài 4 phút.
+              Nếu chưa gắn file MP3, thanh thời gian sẽ giả lập độ dài 4 phút để dễ tập thử.
             </div>
 
             <div class="login-panel">
               <div class="login-header">
                 <div>Đăng nhập & thanh toán</div>
-                <small>Chế độ demo frontend – nút bị khoá</small>
+                <small>Chế độ demo frontend – các nút đang bị khoá.</small>
               </div>
 
               <div class="login-buttons">
@@ -607,15 +724,24 @@
               </div>
 
               <textarea class="log-box" readonly>Log:
-- FYKINGDOM v0.1 đang chạy ở chế độ frontend-only.
+- FYKINGDOM v0.2 đang chạy ở chế độ frontend-only.
 - Không gửi request tới Pi Network hoặc bất kỳ backend nào.
-- Dùng để trình diễn giao diện và logic player trước khi gắn Pi SDK.</textarea>
+- Dùng để trình diễn giao diện & logic player trước khi gắn Pi SDK thật.</textarea>
             </div>
           </div>
         </div>
       </section>
 
     </main>
+  </div>
+
+  <!-- Logo modal -->
+  <div class="logo-modal" id="mk-logo-modal">
+    <div class="logo-modal-backdrop"></div>
+    <div class="logo-modal-content">
+      <button class="logo-modal-close" id="mk-logo-close">✕</button>
+      <img src="assets/musickingdom-golden-turtle.jpg" alt="Musickingdom Golden Turtle full" />
+    </div>
   </div>
 
   <script src="index.js"></script>
