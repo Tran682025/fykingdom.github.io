@@ -220,7 +220,7 @@ body{
   color:var(--muted);
 }
 
-/* Player mini-bar under left panel (fake, chỉ để giống giao diện) */
+/* Player mini-bar under left panel (fake) */
 .mk-mini-player{
   margin-top:4px;
   padding-top:8px;
@@ -229,7 +229,7 @@ body{
   color:var(--muted);
 }
 
-/* RIGHT: REAL FYKINGDOM PLAYER */
+/* RIGHT: FYKINGDOM PLAYER */
 #fy-player header{
   margin-bottom:12px;
 }
@@ -391,6 +391,73 @@ body{
   font-size:11px;
   color:var(--muted);
   margin-top:8px;
+  margin-bottom:10px;
+}
+
+/* LOGIN / PAYMENT DEMO PANEL */
+.fy-login-panel{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px dashed #374151;
+}
+.fy-login-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+}
+.fy-login-title{
+  font-size:13px;
+  font-weight:600;
+}
+.fy-login-badge{
+  font-size:11px;
+  color:var(--muted);
+}
+.fy-login-buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:8px;
+}
+.fy-login-btn{
+  padding:7px 14px;
+  border-radius:999px;
+  border:none;
+  font-size:12px;
+  cursor:not-allowed;
+  opacity:.55;
+  background:var(--panel-soft-2);
+  color:var(--text);
+}
+.fy-login-btn.primary{
+  background:var(--accent-soft);
+}
+.fy-login-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:11px;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+.fy-payment-pill{
+  padding:5px 10px;
+  border-radius:999px;
+  background:#0f172a;
+  border:1px solid #4b5563;
+}
+.fy-log-box{
+  width:100%;
+  min-height:90px;
+  border-radius:12px;
+  border:1px solid #334155;
+  background:#020617;
+  color:#e5e7eb;
+  font-family:"Menlo","Consolas","Courier New",monospace;
+  font-size:11px;
+  padding:8px 9px;
+  resize:vertical;
 }
 </style>
 </head>
@@ -398,7 +465,6 @@ body{
 <body>
 <div class="mk-shell">
 
-  <!-- HERO -->
   <section class="mk-hero">
     <div class="mk-hero-main">
       <div class="mk-logo">MUSICKINGDOM</div>
@@ -413,10 +479,9 @@ body{
     </div>
   </section>
 
-  <!-- MAIN LAYOUT -->
   <main class="mk-main">
 
-    <!-- LEFT PANEL: giống giao diện Musickingdom (demo tĩnh) -->
+    <!-- LEFT PANEL: giao diện biên tập (tĩnh) -->
     <section class="mk-panel">
       <h2>Bản nhạc mới</h2>
 
@@ -475,7 +540,7 @@ body{
       </div>
     </section>
 
-    <!-- RIGHT PANEL: FYKINGDOM PLAYER (đang dùng index.js) -->
+    <!-- RIGHT PANEL: FYKINGDOM PLAYER + ĐĂNG NHẬP / THANH TOÁN DEMO -->
     <section class="mk-panel" id="fy-player">
       <header>
         <div id="fy-player-title">FYKINGDOM Player</div>
@@ -519,6 +584,30 @@ body{
           <div class="fy-footer-note">
             Demo này không kết nối Pi Login, Pi Pay hay bất kỳ backend nào.  
             Mục đích: test giao diện & logic player trước khi gắn API thật.
+          </div>
+
+          <!-- ĐĂNG NHẬP & THANH TOÁN (DEMO TĨNH) -->
+          <div class="fy-login-panel">
+            <div class="fy-login-header">
+              <div class="fy-login-title">Đăng nhập & thanh toán</div>
+              <div class="fy-login-badge">Chế độ: demo frontend – nút bị khóa</div>
+            </div>
+
+            <div class="fy-login-buttons">
+              <button class="fy-login-btn primary">Pi Login (DEV)</button>
+              <button class="fy-login-btn">Kiểm tra Premium</button>
+              <button class="fy-login-btn">Pi Payment (OFFLINE)</button>
+            </div>
+
+            <div class="fy-login-row">
+              <span>Tất cả backend / API sẽ chỉ bật ở bản FYKINGDOM V02.</span>
+              <span class="fy-payment-pill">Pi Payment LIVE: OFF</span>
+            </div>
+
+            <textarea class="fy-log-box" readonly>Log:
+- FYKINGDOM V01 đang chạy ở chế độ demo.
+- Không gửi request tới Pi Network hoặc backend.
+- Dùng để trình diễn giao diện & player cho Pioneers.</textarea>
           </div>
         </div>
       </div>
