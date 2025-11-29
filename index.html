@@ -1,621 +1,623 @@
 <!doctype html>
 <html lang="vi">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>PiChordify Kingdom — FYKINGDOM v0.1 (Frontend Demo)</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PiChordify Kingdom — FYKINGDOM v0.1</title>
 
-<style>
-:root{
-  --bg:#050816;
-  --panel:#111827;
-  --panel-soft:#171f32;
-  --panel-soft-2:#1e2640;
-  --text:#e5e7eb;
-  --muted:#9ca3af;
-  --accent:#60a5fa;
-  --accent-soft:#273a64;
-  --accent-2:#f97316;
-  --radius:14px;
-  --pad:16px;
-  --shadow:0 18px 40px rgba(0,0,0,.45);
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{
-  background:radial-gradient(circle at top,#3b0764 0,#020617 55%,#000 100%);
-  min-height:100vh;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;
-  color:var(--text);
-}
+  <style>
+    :root{
+      --bg:#050816;
+      --panel:#0b1220;
+      --panel-soft:#111827;
+      --panel-soft-2:#1f2937;
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --accent:#60a5fa;
+      --accent-soft:#1d4ed8;
+      --radius-lg:18px;
+      --radius-md:12px;
+      --shadow-main:0 20px 40px rgba(0,0,0,.55);
+    }
 
-/* SHELL */
-.mk-shell{
-  max-width:1200px;
-  margin:0 auto;
-  padding:20px 14px 40px;
-}
+    *{margin:0;padding:0;box-sizing:border-box;}
 
-/* HERO */
-.mk-hero{
-  background:linear-gradient(135deg,#7c3aed,#ec4899);
-  border-radius:22px;
-  padding:20px 22px;
-  box-shadow:var(--shadow);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:16px;
-  margin-bottom:22px;
-}
-.mk-hero-main{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-.mk-logo{
-  letter-spacing:.18em;
-  font-size:13px;
-  text-transform:uppercase;
-  opacity:.88;
-}
-.mk-title{
-  font-size:22px;
-  font-weight:700;
-}
-.mk-sub{
-  font-size:14px;
-  opacity:.9;
-}
-.mk-badge{
-  padding:8px 14px;
-  background:rgba(15,23,42,.85);
-  border-radius:999px;
-  font-size:12px;
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-  min-width:180px;
-}
-.mk-badge span:first-child{
-  font-weight:600;
-}
-.mk-badge span:last-child{
-  color:#c4b5fd;
-}
+    body{
+      min-height:100vh;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;
+      background:
+        radial-gradient(circle at top,#4c1d95 0,#020617 55%,#000 100%);
+      color:var(--text);
+    }
 
-/* LAYOUT */
-.mk-main{
-  display:grid;
-  grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);
-  gap:18px;
-}
-@media(max-width:900px){
-  .mk-main{grid-template-columns:1fr;}
-}
+    a{color:inherit;}
 
-/* PANEL BASE */
-.mk-panel{
-  background:var(--panel);
-  border-radius:22px;
-  padding:18px 18px 16px;
-  box-shadow:var(--shadow);
-  border:1px solid #1f2937;
-}
+    .shell{
+      max-width:1180px;
+      margin:0 auto;
+      padding:22px 14px 40px;
+    }
 
-/* LEFT: EDITOR LOOKALIKE */
-.mk-panel h2{
-  font-size:17px;
-  margin-bottom:10px;
-}
-.mk-section-label{
-  font-size:13px;
-  color:var(--muted);
-  margin-bottom:4px;
-}
+    /* HERO */
+    .hero{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:18px;
+      padding:20px 22px;
+      border-radius:24px;
+      background:linear-gradient(135deg,#7c3aed,#ec4899);
+      box-shadow:var(--shadow-main);
+      margin-bottom:22px;
+    }
+    .hero-main{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .hero-logo{
+      font-size:13px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      opacity:.9;
+    }
+    .hero-title{
+      font-size:23px;
+      font-weight:700;
+    }
+    .hero-sub{
+      font-size:14px;
+      opacity:.95;
+    }
+    .hero-badge{
+      min-width:190px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(15,23,42,.9);
+      font-size:12px;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .hero-badge span:first-child{font-weight:600;}
+    .hero-badge span:last-child{color:#c4b5fd;}
 
-/* Instrument tabs */
-.mk-tabs{
-  display:flex;
-  gap:8px;
-  margin-bottom:12px;
-}
-.mk-tab{
-  flex:0 0 auto;
-  padding:6px 12px;
-  border-radius:999px;
-  border:none;
-  cursor:default;
-  font-size:13px;
-  background:var(--panel-soft);
-  color:var(--muted);
-}
-.mk-tab.is-active{
-  background:#f9fafb;
-  color:#111827;
-}
+    @media (max-width:860px){
+      .hero{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+    }
 
-/* Row */
-.mk-row{
-  display:flex;
-  gap:10px;
-  margin-bottom:10px;
-}
-.mk-row > *{flex:1;}
-.mk-input, .mk-select{
-  width:100%;
-  padding:8px 10px;
-  border-radius:10px;
-  border:1px solid #334155;
-  background:var(--panel-soft);
-  color:var(--text);
-  font-size:13px;
-}
-.mk-select{
-  appearance:none;
-}
-.mk-pill-indicator{
-  min-width:120px;
-  text-align:center;
-  font-size:12px;
-  border-radius:999px;
-  background:var(--panel-soft);
-  border:1px solid #4b5563;
-  padding:7px 10px;
-}
+    /* LAYOUT MAIN */
+    .layout{
+      display:grid;
+      grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);
+      gap:18px;
+    }
+    @media (max-width:900px){
+      .layout{grid-template-columns:1fr;}
+    }
 
-/* Textareas */
-.mk-textarea{
-  width:100%;
-  min-height:110px;
-  resize:vertical;
-  border-radius:12px;
-  border:1px solid #334155;
-  background:var(--panel-soft);
-  color:var(--text);
-  font-size:13px;
-  padding:9px 10px;
-  margin-bottom:8px;
-}
-.mk-caption{
-  font-size:11px;
-  color:var(--muted);
-  margin-bottom:12px;
-}
+    .panel{
+      background:var(--panel);
+      border-radius:var(--radius-lg);
+      padding:18px 18px 16px;
+      border:1px solid #1e293b;
+      box-shadow:var(--shadow-main);
+    }
 
-/* Autofill row */
-.mk-row-between{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:10px;
-}
-.mk-link-btn{
-  border:none;
-  padding:7px 12px;
-  border-radius:999px;
-  background:var(--panel-soft);
-  color:var(--text);
-  font-size:12px;
-  cursor:default;
-}
-.mk-link-btn.primary{
-  background:var(--accent-soft);
-}
+    /* LEFT PANEL – EDITOR LOOK */
+    .panel h2{
+      font-size:17px;
+      margin-bottom:10px;
+    }
+    .section-label{
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
 
-/* MP3 + controls line */
-.mk-mp3-row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  align-items:center;
-  margin-bottom:12px;
-}
-.mk-mp3-row .mk-input{flex:1 1 220px;}
-.mk-chip{
-  padding:5px 10px;
-  border-radius:999px;
-  border:1px solid #4b5563;
-  font-size:11px;
-  color:var(--muted);
-}
+    .tabs{
+      display:flex;
+      gap:8px;
+      margin-bottom:12px;
+    }
+    .tab{
+      padding:6px 12px;
+      border-radius:999px;
+      border:none;
+      background:var(--panel-soft);
+      color:var(--muted);
+      font-size:13px;
+      cursor:default;
+    }
+    .tab.is-active{
+      background:#f9fafb;
+      color:#111827;
+    }
 
-/* Player mini-bar under left panel (fake) */
-.mk-mini-player{
-  margin-top:4px;
-  padding-top:8px;
-  border-top:1px dashed #374151;
-  font-size:11px;
-  color:var(--muted);
-}
+    .row{
+      display:flex;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .row > *{flex:1;}
 
-/* RIGHT: FYKINGDOM PLAYER */
-#fy-player header{
-  margin-bottom:12px;
-}
-#fy-player-title{
-  font-size:16px;
-  font-weight:600;
-  margin-bottom:2px;
-}
-#fy-player-note{
-  font-size:12px;
-  color:var(--muted);
-}
+    .input,
+    .select{
+      width:100%;
+      padding:8px 10px;
+      border-radius:var(--radius-md);
+      border:1px solid #334155;
+      background:var(--panel-soft);
+      color:var(--text);
+      font-size:13px;
+    }
+    .select{appearance:none;}
 
-/* Library+player layout */
-.fy-layout{
-  display:grid;
-  grid-template-columns:220px minmax(0,1fr);
-  gap:14px;
-}
-@media(max-width:900px){
-  .fy-layout{grid-template-columns:1fr;}
-}
+    .pill-indicator{
+      min-width:130px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:var(--panel-soft);
+      border:1px solid #475569;
+      font-size:12px;
+      text-align:center;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
 
-/* Library */
-#fy-library{
-  background:var(--panel-soft);
-  border-radius:18px;
-  padding:10px;
-  max-height:360px;
-  overflow-y:auto;
-}
-.fy-library-title{
-  font-size:13px;
-  font-weight:600;
-  margin-bottom:6px;
-}
-#fy-song-list{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-}
-.fy-song-item{
-  width:100%;
-  text-align:left;
-  padding:9px 9px;
-  border-radius:10px;
-  border:none;
-  background:transparent;
-  color:var(--text);
-  cursor:pointer;
-  font-size:13px;
-}
-.fy-song-item:hover{
-  background:rgba(148,163,184,.12);
-}
-.fy-song-item.is-active{
-  background:var(--accent-soft);
-  border-left:3px solid var(--accent);
-}
-.fy-song-main{font-weight:600;}
-.fy-song-artist{
-  font-size:11px;
-  color:var(--muted);
-}
-.fy-song-meta{
-  font-size:11px;
-  color:var(--muted);
-  display:flex;
-  gap:6px;
-  margin-top:2px;
-}
+    .textarea{
+      width:100%;
+      min-height:110px;
+      resize:vertical;
+      border-radius:var(--radius-md);
+      border:1px solid #334155;
+      background:var(--panel-soft);
+      color:var(--text);
+      font-size:13px;
+      padding:9px 10px;
+      margin-bottom:8px;
+    }
 
-/* Player detail */
-#fy-song-title{
-  font-size:18px;
-  font-weight:700;
-  margin-bottom:4px;
-}
-#fy-song-meta{
-  font-size:13px;
-  color:var(--muted);
-  margin-bottom:10px;
-}
+    .caption{
+      font-size:11px;
+      color:var(--muted);
+      margin-bottom:12px;
+    }
 
-/* Timeline */
-#fy-timeline{
-  height:9px;
-  background:#020617;
-  border-radius:999px;
-  cursor:pointer;
-  position:relative;
-  margin-bottom:4px;
-  overflow:hidden;
-}
-#fy-timeline-fill{
-  height:100%;
-  width:0%;
-  border-radius:999px;
-  background:linear-gradient(90deg,#38bdf8,#a855f7);
-}
-#fy-times{
-  display:flex;
-  justify-content:space-between;
-  font-size:11px;
-  color:var(--muted);
-  margin-bottom:10px;
-}
+    .row-between{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
 
-/* Controls */
-#fy-controls{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-bottom:10px;
-}
-#fy-controls button{
-  padding:7px 14px;
-  border-radius:999px;
-  border:none;
-  background:var(--panel-soft);
-  color:var(--text);
-  font-size:13px;
-  cursor:pointer;
-}
-#fy-controls button:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-}
+    .link-btn{
+      border:none;
+      padding:7px 12px;
+      border-radius:999px;
+      background:var(--panel-soft);
+      color:var(--text);
+      font-size:12px;
+      cursor:default;
+    }
+    .link-btn.primary{
+      background:var(--panel-soft-2);
+      border:1px solid #4b5563;
+    }
 
-/* Scroll toggle */
-#fy-scroll-toggle{
-  padding:6px 12px;
-  border-radius:999px;
-  border:none;
-  background:var(--panel-soft-2);
-  color:var(--text);
-  font-size:12px;
-  margin-bottom:8px;
-  cursor:pointer;
-}
+    .mp3-row{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:8px;
+      margin-bottom:12px;
+    }
+    .mp3-row .input{flex:1 1 240px;}
+    .chip{
+      padding:5px 10px;
+      border-radius:999px;
+      border:1px solid #4b5563;
+      font-size:11px;
+      color:var(--muted);
+    }
 
-/* Chord sheet */
-#fy-scroll-container{
-  max-height:230px;
-  overflow-y:auto;
-  padding:8px 6px 12px;
-  border-radius:16px;
-  background:var(--panel-soft);
-}
-#fy-chord-sheet{
-  white-space:pre-wrap;
-  font-family:"Menlo","Consolas","Courier New",monospace;
-  font-size:14px;
-  line-height:1.55;
-}
+    .mini-note{
+      margin-top:4px;
+      padding-top:8px;
+      border-top:1px dashed #374151;
+      font-size:11px;
+      color:var(--muted);
+    }
 
-/* Footer note */
-.fy-footer-note{
-  font-size:11px;
-  color:var(--muted);
-  margin-top:8px;
-  margin-bottom:10px;
-}
+    @media (max-width:640px){
+      .row{flex-direction:column;}
+      .row-between{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+      .mp3-row{flex-direction:column;}
+    }
 
-/* LOGIN / PAYMENT DEMO PANEL */
-.fy-login-panel{
-  margin-top:10px;
-  padding-top:10px;
-  border-top:1px dashed #374151;
-}
-.fy-login-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:8px;
-}
-.fy-login-title{
-  font-size:13px;
-  font-weight:600;
-}
-.fy-login-badge{
-  font-size:11px;
-  color:var(--muted);
-}
-.fy-login-buttons{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-bottom:8px;
-}
-.fy-login-btn{
-  padding:7px 14px;
-  border-radius:999px;
-  border:none;
-  font-size:12px;
-  cursor:not-allowed;
-  opacity:.55;
-  background:var(--panel-soft-2);
-  color:var(--text);
-}
-.fy-login-btn.primary{
-  background:var(--accent-soft);
-}
-.fy-login-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:11px;
-  color:var(--muted);
-  margin-bottom:6px;
-}
-.fy-payment-pill{
-  padding:5px 10px;
-  border-radius:999px;
-  background:#0f172a;
-  border:1px solid #4b5563;
-}
-.fy-log-box{
-  width:100%;
-  min-height:90px;
-  border-radius:12px;
-  border:1px solid #334155;
-  background:#020617;
-  color:#e5e7eb;
-  font-family:"Menlo","Consolas","Courier New",monospace;
-  font-size:11px;
-  padding:8px 9px;
-  resize:vertical;
-}
-</style>
+    /* RIGHT PANEL – PLAYER */
+    #fy-player header{
+      margin-bottom:12px;
+    }
+    #fy-player-title{
+      font-size:16px;
+      font-weight:600;
+      margin-bottom:2px;
+    }
+    #fy-player-note{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .fy-layout{
+      display:grid;
+      grid-template-columns:220px minmax(0,1fr);
+      gap:14px;
+      margin-top:10px;
+    }
+    @media (max-width:900px){
+      .fy-layout{grid-template-columns:1fr;}
+    }
+
+    /* library */
+    #fy-library{
+      background:var(--panel-soft);
+      border-radius:var(--radius-md);
+      padding:10px;
+      max-height:360px;
+      overflow-y:auto;
+    }
+    .fy-library-title{
+      font-size:13px;
+      font-weight:600;
+      margin-bottom:6px;
+    }
+    #fy-song-list{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .fy-song-item{
+      width:100%;
+      border:none;
+      text-align:left;
+      padding:9px 9px;
+      border-radius:10px;
+      background:transparent;
+      color:var(--text);
+      cursor:pointer;
+      font-size:13px;
+    }
+    .fy-song-item:hover{
+      background:rgba(148,163,184,.15);
+    }
+    .fy-song-item.is-active{
+      background:var(--panel-soft-2);
+      border-left:3px solid var(--accent);
+    }
+    .fy-song-main{font-weight:600;}
+    .fy-song-artist{
+      font-size:11px;
+      color:var(--muted);
+    }
+    .fy-song-meta{
+      font-size:11px;
+      color:var(--muted);
+      display:flex;
+      gap:6px;
+      margin-top:2px;
+    }
+
+    /* player body */
+    #fy-song-title{
+      font-size:18px;
+      font-weight:700;
+      margin-bottom:4px;
+    }
+    #fy-song-meta{
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:10px;
+    }
+
+    #fy-timeline{
+      height:9px;
+      border-radius:999px;
+      background:#020617;
+      overflow:hidden;
+      cursor:pointer;
+      margin-bottom:4px;
+    }
+    #fy-timeline-fill{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      background:linear-gradient(90deg,#38bdf8,#a855f7);
+    }
+    #fy-times{
+      display:flex;
+      justify-content:space-between;
+      font-size:11px;
+      color:var(--muted);
+      margin-bottom:10px;
+    }
+
+    #fy-controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-bottom:10px;
+    }
+    #fy-controls button{
+      padding:7px 14px;
+      border-radius:999px;
+      border:none;
+      background:var(--panel-soft);
+      color:var(--text);
+      font-size:13px;
+      cursor:pointer;
+    }
+    #fy-controls button:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+    }
+
+    #fy-scroll-toggle{
+      padding:6px 12px;
+      border-radius:999px;
+      border:none;
+      background:var(--panel-soft-2);
+      color:var(--text);
+      font-size:12px;
+      margin-bottom:8px;
+      cursor:pointer;
+    }
+
+    #fy-scroll-container{
+      max-height:230px;
+      overflow-y:auto;
+      padding:8px 6px 12px;
+      border-radius:var(--radius-md);
+      background:var(--panel-soft);
+    }
+    #fy-chord-sheet{
+      white-space:pre-wrap;
+      font-family:"Menlo","Consolas","Courier New",monospace;
+      font-size:14px;
+      line-height:1.55;
+    }
+
+    .fy-note{
+      font-size:11px;
+      color:var(--muted);
+      margin-top:8px;
+      margin-bottom:10px;
+    }
+
+    /* login / payment demo */
+    .login-panel{
+      margin-top:10px;
+      padding-top:10px;
+      border-top:1px dashed #374151;
+    }
+    .login-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:8px;
+      font-size:13px;
+    }
+    .login-header small{
+      font-size:11px;
+      color:var(--muted);
+    }
+    .login-buttons{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-bottom:8px;
+    }
+    .login-btn{
+      padding:7px 14px;
+      border-radius:999px;
+      border:none;
+      background:var(--panel-soft-2);
+      color:var(--text);
+      font-size:12px;
+      opacity:.6;
+      cursor:not-allowed;
+    }
+    .login-btn.primary{
+      background:var(--accent-soft);
+    }
+    .login-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:11px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+    .payment-pill{
+      padding:5px 10px;
+      border-radius:999px;
+      background:#020617;
+      border:1px solid #4b5563;
+    }
+    .log-box{
+      width:100%;
+      min-height:90px;
+      border-radius:var(--radius-md);
+      border:1px solid #334155;
+      background:#020617;
+      color:#e5e7eb;
+      font-family:"Menlo","Consolas","Courier New",monospace;
+      font-size:11px;
+      padding:8px 9px;
+      resize:vertical;
+    }
+  </style>
 </head>
 
 <body>
-<div class="mk-shell">
+  <div class="shell">
 
-  <section class="mk-hero">
-    <div class="mk-hero-main">
-      <div class="mk-logo">MUSICKINGDOM</div>
-      <div class="mk-title">PiChordify Kingdom</div>
-      <div class="mk-sub">
-        Công cụ gợi ý hợp âm & luyện hát trong hệ sinh thái Pi – không gian thử nghiệm dành cho Pioneers.
-      </div>
-    </div>
-    <div class="mk-badge">
-      <span>FYKINGDOM V01 – Frontend Demo</span>
-      <span>Chỉ giao diện & player. Chưa gắn Pi Pay, ví, backend.</span>
-    </div>
-  </section>
-
-  <main class="mk-main">
-
-    <!-- LEFT PANEL: giao diện biên tập (tĩnh) -->
-    <section class="mk-panel">
-      <h2>Bản nhạc mới</h2>
-
-      <div class="mk-section-label">Nhạc cụ</div>
-      <div class="mk-tabs">
-        <button class="mk-tab is-active">Piano</button>
-        <button class="mk-tab">Guitar</button>
-        <button class="mk-tab">Ukulele</button>
-      </div>
-
-      <div class="mk-row">
-        <div>
-          <div class="mk-section-label">Tên bài</div>
-          <input class="mk-input" placeholder="Ví dụ: Tran682025 – Demo Jam" />
-        </div>
-        <div>
-          <div class="mk-section-label">Giọng (key)</div>
-          <select class="mk-select">
-            <option>G</option>
-            <option>C</option>
-            <option>D</option>
-            <option>Em</option>
-            <option>Am</option>
-          </select>
-        </div>
-        <div class="mk-pill-indicator">
-          Tiến trình: I – V – vi – IV
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-main">
+        <div class="hero-logo">MUSICKINGDOM</div>
+        <div class="hero-title">PiChordify Kingdom</div>
+        <div class="hero-sub">
+          Công cụ gợi ý hợp âm & luyện hát trong hệ sinh thái Pi – bản demo chạy thuần frontend.
         </div>
       </div>
-
-      <div class="mk-section-label">Lời + hợp âm (mỗi dòng có mốc thời gian)</div>
-      <textarea class="mk-textarea" placeholder="00:12   Em   D / ..."></textarea>
-
-      <div class="mk-section-label">Mẫu hợp âm cho cả bài (pattern)</div>
-      <textarea class="mk-textarea" placeholder="Ví dụ: C  G  Am  F  |  F  G  Em  Am"></textarea>
-      <div class="mk-caption">
-        Pattern sẽ lặp từ đầu đến cuối bài, mỗi hợp âm chia đều theo chiều dài MP3.  
-        FYKINGDOM V01 chỉ là demo giao diện – chưa phân tích file thật.
-      </div>
-
-      <div class="mk-row-between">
-        <button class="mk-link-btn primary">Auto fill</button>
-        <button class="mk-link-btn">Tự điền hợp âm cho cả bài theo mẫu ở trên</button>
-      </div>
-
-      <div class="mk-section-label">File MP3</div>
-      <div class="mk-mp3-row">
-        <input class="mk-input" placeholder="https://.../song.mp3 (demo – chưa phân tích thật)" />
-        <span class="mk-chip">Chọn MP3</span>
-        <span class="mk-chip">Load</span>
-      </div>
-
-      <div class="mk-mini-player">
-        Player phân tích MP3 thật sẽ được gắn ở phiên bản sau.  
-        V01 chỉ dùng player phía bên phải để nghe thử & xem hợp âm mẫu.
+      <div class="hero-badge">
+        <span>FYKINGDOM v0.1 – Frontend only</span>
+        <span>Không Pi Login, không Pi Pay, không backend. Dùng thử logic và giao diện.</span>
       </div>
     </section>
 
-    <!-- RIGHT PANEL: FYKINGDOM PLAYER + ĐĂNG NHẬP / THANH TOÁN DEMO -->
-    <section class="mk-panel" id="fy-player">
-      <header>
-        <div id="fy-player-title">FYKINGDOM Player</div>
-        <div id="fy-player-note">
-          Playlist demo (Tran682025). Chọn bài bên trái để xem hợp âm & chạy auto-scroll.
+    <!-- MAIN LAYOUT -->
+    <main class="layout">
+
+      <!-- LEFT: EDITOR LOOK (TĨNH) -->
+      <section class="panel">
+        <h2>Bản nhạc mới (giao diện demo)</h2>
+
+        <div class="section-label">Nhạc cụ</div>
+        <div class="tabs">
+          <button class="tab is-active">Piano</button>
+          <button class="tab">Guitar</button>
+          <button class="tab">Ukulele</button>
         </div>
-      </header>
 
-      <div class="fy-layout">
-        <!-- Library -->
-        <aside id="fy-library">
-          <div class="fy-library-title">Danh sách bản demo</div>
-          <div id="fy-song-list"></div>
-        </aside>
-
-        <!-- Player body -->
-        <div>
-          <div id="fy-song-title">Chọn một bản ở danh sách bên trái</div>
-          <div id="fy-song-meta"></div>
-
-          <div id="fy-timeline">
-            <div id="fy-timeline-fill"></div>
+        <div class="row">
+          <div>
+            <div class="section-label">Tên bài</div>
+            <input class="input" placeholder="Ví dụ: Tran682025 – Demo Jam" />
           </div>
-          <div id="fy-times">
-            <span id="fy-time-current">0:00</span>
-            <span id="fy-time-total">0:00</span>
+          <div>
+            <div class="section-label">Giọng (key)</div>
+            <select class="select">
+              <option>G</option>
+              <option>C</option>
+              <option>D</option>
+              <option>Em</option>
+              <option>Am</option>
+            </select>
           </div>
+          <div class="pill-indicator">Tiến trình: I – V – vi – IV</div>
+        </div>
 
-          <div id="fy-controls">
-            <button id="fy-btn-play">▶ Play</button>
-            <button id="fy-btn-pause" disabled>⏸ Pause</button>
-            <button id="fy-btn-stop">⏹ Stop</button>
+        <div class="section-label">Lời + hợp âm (mỗi dòng có mốc thời gian)</div>
+        <textarea class="textarea" placeholder="00:12   Em   D / ..."></textarea>
+
+        <div class="section-label">Mẫu hợp âm cho cả bài (pattern)</div>
+        <textarea class="textarea" placeholder="Ví dụ: C  G  Am  F  |  F  G  Em  Am"></textarea>
+        <div class="caption">
+          Pattern sẽ lặp từ đầu đến cuối bài, mỗi hợp âm chia đều theo chiều dài MP3.
+          FYKINGDOM v0.1 chỉ minh hoạ giao diện, chưa phân tích file thật.
+        </div>
+
+        <div class="row-between">
+          <button class="link-btn primary">Auto fill</button>
+          <button class="link-btn">Tự điền hợp âm theo pattern (demo)</button>
+        </div>
+
+        <div class="section-label">File MP3</div>
+        <div class="mp3-row">
+          <input class="input" placeholder="https://.../song.mp3 (chỉ minh hoạ, chưa phân tích)" />
+          <span class="chip">Chọn MP3</span>
+          <span class="chip">Load</span>
+        </div>
+
+        <div class="mini-note">
+          Panel này chỉ để mô phỏng Musickingdom; logic thật sẽ gắn ở phiên bản sau.
+        </div>
+      </section>
+
+      <!-- RIGHT: PLAYER + LOGIN DEMO -->
+      <section class="panel" id="fy-player">
+        <header>
+          <div id="fy-player-title">FYKINGDOM Player</div>
+          <div id="fy-player-note">
+            Chọn một bản demo ở danh sách bên trái để xem hợp âm và chạy auto-scroll.
           </div>
+        </header>
 
-          <button id="fy-scroll-toggle">Auto-scroll: OFF</button>
+        <div class="fy-layout">
+          <!-- Library -->
+          <aside id="fy-library">
+            <div class="fy-library-title">Danh sách bản demo</div>
+            <div id="fy-song-list"></div>
+          </aside>
 
-          <div id="fy-scroll-container">
-            <pre id="fy-chord-sheet"></pre>
-          </div>
+          <!-- Player body -->
+          <div>
+            <div id="fy-song-title">Chưa chọn bài</div>
+            <div id="fy-song-meta"></div>
 
-          <div class="fy-footer-note">
-            Demo này không kết nối Pi Login, Pi Pay hay bất kỳ backend nào.  
-            Mục đích: test giao diện & logic player trước khi gắn API thật.
-          </div>
-
-          <!-- ĐĂNG NHẬP & THANH TOÁN (DEMO TĨNH) -->
-          <div class="fy-login-panel">
-            <div class="fy-login-header">
-              <div class="fy-login-title">Đăng nhập & thanh toán</div>
-              <div class="fy-login-badge">Chế độ: demo frontend – nút bị khóa</div>
+            <div id="fy-timeline">
+              <div id="fy-timeline-fill"></div>
+            </div>
+            <div id="fy-times">
+              <span id="fy-time-current">0:00</span>
+              <span id="fy-time-total">0:00</span>
             </div>
 
-            <div class="fy-login-buttons">
-              <button class="fy-login-btn primary">Pi Login (DEV)</button>
-              <button class="fy-login-btn">Kiểm tra Premium</button>
-              <button class="fy-login-btn">Pi Payment (OFFLINE)</button>
+            <div id="fy-controls">
+              <button id="fy-btn-play">▶ Play</button>
+              <button id="fy-btn-pause" disabled>⏸ Pause</button>
+              <button id="fy-btn-stop">⏹ Stop</button>
             </div>
 
-            <div class="fy-login-row">
-              <span>Tất cả backend / API sẽ chỉ bật ở bản FYKINGDOM V02.</span>
-              <span class="fy-payment-pill">Pi Payment LIVE: OFF</span>
+            <button id="fy-scroll-toggle">Auto-scroll: OFF</button>
+
+            <div id="fy-scroll-container">
+              <pre id="fy-chord-sheet"></pre>
             </div>
 
-            <textarea class="fy-log-box" readonly>Log:
-- FYKINGDOM V01 đang chạy ở chế độ demo.
-- Không gửi request tới Pi Network hoặc backend.
-- Dùng để trình diễn giao diện & player cho Pioneers.</textarea>
+            <div class="fy-note">
+              Player hiện chỉ dùng cho demo: nếu chưa gắn file MP3 thật, thanh thời gian sẽ giả lập độ dài 4 phút.
+            </div>
+
+            <div class="login-panel">
+              <div class="login-header">
+                <div>Đăng nhập & thanh toán</div>
+                <small>Chế độ demo frontend – nút bị khoá</small>
+              </div>
+
+              <div class="login-buttons">
+                <button class="login-btn primary">Pi Login (DEV)</button>
+                <button class="login-btn">Kiểm tra Premium</button>
+                <button class="login-btn">Pi Payment (OFFLINE)</button>
+              </div>
+
+              <div class="login-row">
+                <span>Tất cả API / backend sẽ bật ở phiên bản kế tiếp.</span>
+                <span class="payment-pill">Pi Payment LIVE: OFF</span>
+              </div>
+
+              <textarea class="log-box" readonly>Log:
+- FYKINGDOM v0.1 đang chạy ở chế độ frontend-only.
+- Không gửi request tới Pi Network hoặc bất kỳ backend nào.
+- Dùng để trình diễn giao diện và logic player trước khi gắn Pi SDK.</textarea>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-  </main>
-</div>
+    </main>
+  </div>
 
-<script src="index.js"></script>
+  <script src="index.js"></script>
 </body>
 </html>
