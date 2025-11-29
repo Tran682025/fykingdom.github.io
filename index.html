@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PiChordify Kingdom — FYKINGDOM v0.2</title>
+  <title>PiChordify Kingdom — FYKINGDOM v0.3 (Pi Login)</title>
 
   <style>
     :root{
@@ -63,7 +63,7 @@
       gap:10px;
     }
     .hero-badge{
-      min-width:190px;
+      min-width:210px;
       padding:10px 14px;
       border-radius:999px;
       background:rgba(15,23,42,.9);
@@ -329,7 +329,7 @@
 
     .fy-note{font-size:11px;color:var(--muted);margin-top:8px;margin-bottom:10px;}
 
-    /* login / payment demo */
+    /* login / payment */
     .login-panel{margin-top:10px;padding-top:10px;border-top:1px dashed #374151;}
     .login-header{
       display:flex;justify-content:space-between;
@@ -340,7 +340,7 @@
     .login-btn{
       padding:7px 14px;border-radius:999px;border:none;
       background:var(--panel-soft-2);color:var(--text);
-      font-size:12px;opacity:.6;cursor:not-allowed;
+      font-size:12px;cursor:pointer;
     }
     .login-btn.primary{background:var(--accent-soft);}
     .login-row{
@@ -386,6 +386,9 @@
       background:rgba(15,23,42,.92);color:#e5e7eb;
     }
   </style>
+
+  <!-- Pi SDK sẽ chỉ hoạt động trong Pi Browser -->
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 <body>
   <div class="shell">
@@ -395,13 +398,13 @@
         <div class="hero-logo-text">MUSICKINGDOM</div>
         <div class="hero-title">PiChordify Kingdom</div>
         <div class="hero-sub">
-          Công cụ gợi ý hợp âm & luyện hát trong hệ sinh thái Pi – bản FYKINGDOM chạy thuần frontend.
+          Công cụ gợi ý hợp âm & luyện hát trong hệ sinh thái Pi – bản FYKINGDOM chạy thuần frontend, đã gắn Pi Login / Pi Pay (DEV).
         </div>
       </div>
       <div class="hero-right">
         <div class="hero-badge">
-          <span>FYKINGDOM v0.2</span>
-          <span>Golden Turtle Edition — frontend only.</span>
+          <span>FYKINGDOM v0.3</span>
+          <span>Golden Turtle Edition — Pi Login & Pi Pay (DEV).</span>
         </div>
         <button class="hero-logo-btn" id="mk-logo-btn" title="Musickingdom Golden Turtle">
           <img src="assets/musickingdom-golden-turtle.jpg" alt="Musickingdom Golden Turtle" />
@@ -447,7 +450,7 @@
         <textarea id="fy-input-pattern" class="textarea" placeholder="Ví dụ: C  G  Am  F  |  F  G  Em  Am"></textarea>
         <div class="caption">
           Pattern sẽ lặp từ đầu đến cuối bài, mỗi hợp âm chia đều theo chiều dài MP3.  
-          FYKINGDOM v0.2 cho phép đẩy nội dung này sang player bên phải để tập thử.
+          FYKINGDOM v0.3 cho phép đẩy nội dung này sang player bên phải để tập thử.
         </div>
 
         <div class="row-between">
@@ -523,24 +526,24 @@
             <div class="login-panel">
               <div class="login-header">
                 <div>Đăng nhập & thanh toán</div>
-                <small>Chế độ demo frontend – các nút đang bị khoá.</small>
+                <small>Chế độ DEV – sử dụng Pi SDK v2.0.</small>
               </div>
 
               <div class="login-buttons">
-                <button class="login-btn primary">Pi Login (DEV)</button>
-                <button class="login-btn">Kiểm tra Premium</button>
-                <button class="login-btn">Pi Payment (OFFLINE)</button>
+                <button class="login-btn primary" id="fy-btn-pi-login">Pi Login (DEV)</button>
+                <button class="login-btn" id="fy-btn-check-premium">Kiểm tra Premium</button>
+                <button class="login-btn" id="fy-btn-pi-pay">Pi Payment (DEV)</button>
               </div>
 
               <div class="login-row">
-                <span>Tất cả API / backend sẽ bật ở phiên bản kế tiếp.</span>
-                <span class="payment-pill">Pi Payment LIVE: OFF</span>
+                <span>Pi Login / Pi Pay chỉ hoạt động trong Pi Browser + có backend.</span>
+                <span class="payment-pill" id="fy-pill-status">Pi SDK: chưa init</span>
               </div>
 
-              <textarea class="log-box" readonly>Log:
-- FYKINGDOM v0.2 đang chạy ở chế độ frontend-only.
-- Không gửi request tới Pi Network hoặc bất kỳ backend nào.
-- Dùng để trình diễn giao diện & logic player trước khi gắn Pi SDK thật.</textarea>
+              <textarea class="log-box" readonly id="fy-log-box">Log:
+- FYKINGDOM v0.3 đã gắn Pi SDK (client).
+- Cần mở app trong Pi Browser và cấu hình BACKEND_URL để Pi Payment hoàn tất.
+</textarea>
             </div>
           </div>
         </div>
