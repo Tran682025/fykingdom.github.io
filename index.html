@@ -19,16 +19,13 @@
       --radius-md:12px;
       --shadow-main:0 20px 40px rgba(0,0,0,.55);
     }
-
     *{margin:0;padding:0;box-sizing:border-box;}
-
     body{
       min-height:100vh;
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;
       background:radial-gradient(circle at top,#4c1d95 0,#020617 55%,#000 100%);
       color:var(--text);
     }
-
     .shell{
       max-width:1180px;
       margin:0 auto;
@@ -58,15 +55,8 @@
       text-transform:uppercase;
       opacity:.9;
     }
-    .hero-title{
-      font-size:23px;
-      font-weight:700;
-    }
-    .hero-sub{
-      font-size:14px;
-      opacity:.96;
-    }
-
+    .hero-title{font-size:23px;font-weight:700;}
+    .hero-sub{font-size:14px;opacity:.96;}
     .hero-right{
       display:flex;
       align-items:center;
@@ -84,40 +74,28 @@
     }
     .hero-badge span:first-child{font-weight:600;}
     .hero-badge span:last-child{color:#c4b5fd;}
-
     .hero-logo-btn{
       border:none;
       padding:0;
       background:transparent;
       border-radius:999px;
       overflow:hidden;
-      width:56px;
-      height:56px;
+      width:56px;height:56px;
       flex:0 0 56px;
       box-shadow:0 10px 25px rgba(15,23,42,.9);
       cursor:pointer;
       transition:transform .22s ease, box-shadow .22s ease;
     }
     .hero-logo-btn img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
+      width:100%;height:100%;object-fit:cover;display:block;
     }
     .hero-logo-btn:hover{
       transform:translateY(-2px) scale(1.05);
       box-shadow:0 16px 35px rgba(15,23,42,1);
     }
-
     @media (max-width:860px){
-      .hero{
-        flex-direction:column;
-        align-items:flex-start;
-      }
-      .hero-right{
-        width:100%;
-        justify-content:space-between;
-      }
+      .hero{flex-direction:column;align-items:flex-start;}
+      .hero-right{width:100%;justify-content:space-between;}
     }
 
     /* MAIN LAYOUT */
@@ -126,10 +104,7 @@
       grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);
       gap:18px;
     }
-    @media (max-width:900px){
-      .layout{grid-template-columns:1fr;}
-    }
-
+    @media (max-width:900px){.layout{grid-template-columns:1fr;}}
     .panel{
       background:var(--panel);
       border-radius:var(--radius-lg);
@@ -138,22 +113,11 @@
       box-shadow:var(--shadow-main);
     }
 
-    /* LEFT PANEL – EDITOR */
-    .panel h2{
-      font-size:17px;
-      margin-bottom:10px;
-    }
-    .section-label{
-      font-size:13px;
-      color:var(--muted);
-      margin-bottom:4px;
-    }
+    /* LEFT PANEL */
+    .panel h2{font-size:17px;margin-bottom:10px;}
+    .section-label{font-size:13px;color:var(--muted);margin-bottom:4px;}
 
-    .tabs{
-      display:flex;
-      gap:8px;
-      margin-bottom:12px;
-    }
+    .tabs{display:flex;gap:8px;margin-bottom:12px;}
     .tab{
       padding:6px 12px;
       border-radius:999px;
@@ -161,22 +125,17 @@
       background:var(--panel-soft);
       color:var(--muted);
       font-size:13px;
-      cursor:default;
+      cursor:pointer;
     }
     .tab.is-active{
       background:#f9fafb;
       color:#111827;
     }
 
-    .row{
-      display:flex;
-      gap:10px;
-      margin-bottom:10px;
-    }
+    .row{display:flex;gap:10px;margin-bottom:10px;}
     .row > *{flex:1;}
 
-    .input,
-    .select{
+    .input,.select{
       width:100%;
       padding:8px 10px;
       border-radius:var(--radius-md);
@@ -212,12 +171,7 @@
       padding:9px 10px;
       margin-bottom:8px;
     }
-
-    .caption{
-      font-size:11px;
-      color:var(--muted);
-      margin-bottom:12px;
-    }
+    .caption{font-size:11px;color:var(--muted);margin-bottom:12px;}
 
     .row-between{
       display:flex;
@@ -258,7 +212,6 @@
       background:var(--panel-soft-2);
       cursor:pointer;
     }
-
     .mini-note{
       margin-top:4px;
       padding-top:8px;
@@ -266,29 +219,16 @@
       font-size:11px;
       color:var(--muted);
     }
-
     @media (max-width:640px){
       .row{flex-direction:column;}
-      .row-between{
-        flex-direction:column;
-        align-items:flex-start;
-      }
+      .row-between{flex-direction:column;align-items:flex-start;}
       .mp3-row{flex-direction:column;}
     }
 
     /* RIGHT PANEL – PLAYER */
-    #fy-player header{
-      margin-bottom:12px;
-    }
-    #fy-player-title{
-      font-size:16px;
-      font-weight:600;
-      margin-bottom:2px;
-    }
-    #fy-player-note{
-      font-size:12px;
-      color:var(--muted);
-    }
+    #fy-player header{margin-bottom:12px;}
+    #fy-player-title{font-size:16px;font-weight:600;margin-bottom:2px;}
+    #fy-player-note{font-size:12px;color:var(--muted);}
 
     .fy-layout{
       display:grid;
@@ -296,11 +236,8 @@
       gap:14px;
       margin-top:10px;
     }
-    @media (max-width:900px){
-      .fy-layout{grid-template-columns:1fr;}
-    }
+    @media (max-width:900px){.fy-layout{grid-template-columns:1fr;}}
 
-    /* library */
     #fy-library{
       background:var(--panel-soft);
       border-radius:var(--radius-md);
@@ -308,16 +245,8 @@
       max-height:360px;
       overflow-y:auto;
     }
-    .fy-library-title{
-      font-size:13px;
-      font-weight:600;
-      margin-bottom:6px;
-    }
-    #fy-song-list{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-    }
+    .fy-library-title{font-size:13px;font-weight:600;margin-bottom:6px;}
+    #fy-song-list{display:flex;flex-direction:column;gap:4px;}
     .fy-song-item{
       width:100%;
       border:none;
@@ -329,120 +258,65 @@
       cursor:pointer;
       font-size:13px;
     }
-    .fy-song-item:hover{
-      background:rgba(148,163,184,.15);
-    }
+    .fy-song-item:hover{background:rgba(148,163,184,.15);}
     .fy-song-item.is-active{
       background:var(--panel-soft-2);
       border-left:3px solid var(--accent);
     }
     .fy-song-main{font-weight:600;}
-    .fy-song-artist{
-      font-size:11px;
-      color:var(--muted);
-    }
+    .fy-song-artist{font-size:11px;color:var(--muted);}
     .fy-song-meta{
-      font-size:11px;
-      color:var(--muted);
-      display:flex;
-      gap:6px;
-      margin-top:2px;
+      font-size:11px;color:var(--muted);
+      display:flex;gap:6px;margin-top:2px;
     }
 
-    /* player body */
-    #fy-song-title{
-      font-size:18px;
-      font-weight:700;
-      margin-bottom:4px;
-    }
-    #fy-song-meta{
-      font-size:13px;
-      color:var(--muted);
-      margin-bottom:10px;
-    }
+    #fy-song-title{font-size:18px;font-weight:700;margin-bottom:4px;}
+    #fy-song-meta{font-size:13px;color:var(--muted);margin-bottom:10px;}
 
     #fy-timeline{
-      height:9px;
-      border-radius:999px;
-      background:#020617;
-      overflow:hidden;
-      cursor:pointer;
-      margin-bottom:4px;
+      height:9px;border-radius:999px;
+      background:#020617;overflow:hidden;
+      cursor:pointer;margin-bottom:4px;
     }
     #fy-timeline-fill{
-      height:100%;
-      width:0%;
+      height:100%;width:0%;
       border-radius:999px;
       background:linear-gradient(90deg,#38bdf8,#a855f7);
     }
     #fy-times{
-      display:flex;
-      justify-content:space-between;
-      font-size:11px;
-      color:var(--muted);
-      margin-bottom:8px;
+      display:flex;justify-content:space-between;
+      font-size:11px;color:var(--muted);margin-bottom:8px;
     }
 
-    /* volume row */
     #fy-volume-row{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin-bottom:10px;
+      display:flex;align-items:center;gap:10px;margin-bottom:10px;
     }
-    #fy-volume-label{
-      font-size:11px;
-      color:var(--muted);
-      min-width:52px;
-    }
-    #fy-volume{
-      flex:1;
-      accent-color:#38bdf8;
-    }
+    #fy-volume-label{font-size:11px;color:var(--muted);min-width:52px;}
+    #fy-volume{flex:1;accent-color:#38bdf8;}
     #fy-btn-mute{
-      padding:6px 12px;
-      border-radius:999px;
-      border:none;
-      background:var(--panel-soft);
-      color:var(--text);
-      font-size:12px;
-      cursor:pointer;
+      padding:6px 12px;border-radius:999px;border:none;
+      background:var(--panel-soft);color:var(--text);
+      font-size:12px;cursor:pointer;
     }
 
     #fy-controls{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin-bottom:10px;
+      display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;
     }
     #fy-controls button{
-      padding:7px 14px;
-      border-radius:999px;
-      border:none;
-      background:var(--panel-soft);
-      color:var(--text);
-      font-size:13px;
-      cursor:pointer;
+      padding:7px 14px;border-radius:999px;border:none;
+      background:var(--panel-soft);color:var(--text);
+      font-size:13px;cursor:pointer;
     }
-    #fy-controls button:disabled{
-      opacity:.45;
-      cursor:not-allowed;
-    }
+    #fy-controls button:disabled{opacity:.45;cursor:not-allowed;}
 
     #fy-scroll-toggle{
-      padding:6px 12px;
-      border-radius:999px;
-      border:none;
-      background:var(--panel-soft-2);
-      color:var(--text);
-      font-size:12px;
-      margin-bottom:8px;
-      cursor:pointer;
+      padding:6px 12px;border-radius:999px;border:none;
+      background:var(--panel-soft-2);color:var(--text);
+      font-size:12px;margin-bottom:8px;cursor:pointer;
     }
 
     #fy-scroll-container{
-      max-height:230px;
-      overflow-y:auto;
+      max-height:230px;overflow-y:auto;
       padding:8px 6px 12px;
       border-radius:var(--radius-md);
       background:var(--panel-soft);
@@ -450,131 +324,72 @@
     #fy-chord-sheet{
       white-space:pre-wrap;
       font-family:"Menlo","Consolas","Courier New",monospace;
-      font-size:14px;
-      line-height:1.55;
+      font-size:14px;line-height:1.55;
     }
 
-    .fy-note{
-      font-size:11px;
-      color:var(--muted);
-      margin-top:8px;
-      margin-bottom:10px;
-    }
+    .fy-note{font-size:11px;color:var(--muted);margin-top:8px;margin-bottom:10px;}
 
     /* login / payment demo */
-    .login-panel{
-      margin-top:10px;
-      padding-top:10px;
-      border-top:1px dashed #374151;
-    }
+    .login-panel{margin-top:10px;padding-top:10px;border-top:1px dashed #374151;}
     .login-header{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:8px;
-      font-size:13px;
+      display:flex;justify-content:space-between;
+      align-items:center;margin-bottom:8px;font-size:13px;
     }
-    .login-header small{
-      font-size:11px;
-      color:var(--muted);
-    }
-    .login-buttons{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin-bottom:8px;
-    }
+    .login-header small{font-size:11px;color:var(--muted);}
+    .login-buttons{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
     .login-btn{
-      padding:7px 14px;
-      border-radius:999px;
-      border:none;
-      background:var(--panel-soft-2);
-      color:var(--text);
-      font-size:12px;
-      opacity:.6;
-      cursor:not-allowed;
+      padding:7px 14px;border-radius:999px;border:none;
+      background:var(--panel-soft-2);color:var(--text);
+      font-size:12px;opacity:.6;cursor:not-allowed;
     }
-    .login-btn.primary{
-      background:var(--accent-soft);
-    }
+    .login-btn.primary{background:var(--accent-soft);}
     .login-row{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      font-size:11px;
-      color:var(--muted);
+      display:flex;justify-content:space-between;
+      align-items:center;font-size:11px;color:var(--muted);
       margin-bottom:6px;
     }
     .payment-pill{
-      padding:5px 10px;
-      border-radius:999px;
-      background:#020617;
-      border:1px solid #4b5563;
+      padding:5px 10px;border-radius:999px;
+      background:#020617;border:1px solid #4b5563;
     }
     .log-box{
-      width:100%;
-      min-height:90px;
-      border-radius:var(--radius-md);
-      border:1px solid #334155;
-      background:#020617;
-      color:#e5e7eb;
+      width:100%;min-height:90px;border-radius:var(--radius-md);
+      border:1px solid #334155;background:#020617;color:#e5e7eb;
       font-family:"Menlo","Consolas","Courier New",monospace;
-      font-size:11px;
-      padding:8px 9px;
-      resize:vertical;
+      font-size:11px;padding:8px 9px;resize:vertical;
     }
 
     /* Logo modal */
     .logo-modal{
-      position:fixed;
-      inset:0;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      z-index:40;
+      position:fixed;inset:0;display:none;
+      align-items:center;justify-content:center;z-index:40;
     }
     .logo-modal.is-open{display:flex;}
     .logo-modal-backdrop{
-      position:absolute;
-      inset:0;
+      position:absolute;inset:0;
       background:rgba(15,23,42,.85);
       backdrop-filter:blur(8px);
     }
     .logo-modal-content{
-      position:relative;
-      max-width:90vw;
-      max-height:90vh;
-      border-radius:18px;
-      overflow:hidden;
+      position:relative;max-width:90vw;max-height:90vh;
+      border-radius:18px;overflow:hidden;
       box-shadow:0 30px 80px rgba(0,0,0,.9);
-      border:1px solid #4c1d95;
-      z-index:41;
+      border:1px solid #4c1d95;z-index:41;
     }
     .logo-modal-content img{
-      display:block;
-      max-width:100%;
-      max-height:100%;
-      object-fit:contain;
+      display:block;max-width:100%;max-height:100%;object-fit:contain;
     }
     .logo-modal-close{
-      position:absolute;
-      top:8px;
-      right:10px;
-      border:none;
-      border-radius:999px;
-      padding:4px 9px;
-      font-size:13px;
-      cursor:pointer;
-      background:rgba(15,23,42,.92);
-      color:#e5e7eb;
+      position:absolute;top:8px;right:10px;
+      border:none;border-radius:999px;padding:4px 9px;
+      font-size:13px;cursor:pointer;
+      background:rgba(15,23,42,.92);color:#e5e7eb;
     }
   </style>
 </head>
-
 <body>
   <div class="shell">
 
-    <!-- HERO -->
     <section class="hero">
       <div class="hero-main">
         <div class="hero-logo-text">MUSICKINGDOM</div>
@@ -583,7 +398,6 @@
           Công cụ gợi ý hợp âm & luyện hát trong hệ sinh thái Pi – bản FYKINGDOM chạy thuần frontend.
         </div>
       </div>
-
       <div class="hero-right">
         <div class="hero-badge">
           <span>FYKINGDOM v0.2</span>
@@ -595,18 +409,17 @@
       </div>
     </section>
 
-    <!-- MAIN LAYOUT -->
     <main class="layout">
 
-      <!-- LEFT: EDITOR -->
+      <!-- LEFT -->
       <section class="panel">
         <h2>Bản nhạc mới (giao diện demo)</h2>
 
         <div class="section-label">Nhạc cụ</div>
-        <div class="tabs">
-          <button class="tab is-active">Piano</button>
-          <button class="tab">Guitar</button>
-          <button class="tab">Ukulele</button>
+        <div class="tabs" id="fy-instrument-tabs">
+          <button class="tab is-active" data-instrument="Piano">Piano</button>
+          <button class="tab" data-instrument="Guitar">Guitar</button>
+          <button class="tab" data-instrument="Ukulele">Ukulele</button>
         </div>
 
         <div class="row">
@@ -658,7 +471,7 @@
         </div>
       </section>
 
-      <!-- RIGHT: PLAYER + LOGIN DEMO -->
+      <!-- RIGHT -->
       <section class="panel" id="fy-player">
         <header>
           <div id="fy-player-title">FYKINGDOM Player</div>
@@ -668,20 +481,16 @@
         </header>
 
         <div class="fy-layout">
-          <!-- Library -->
           <aside id="fy-library">
             <div class="fy-library-title">Danh sách bản demo</div>
             <div id="fy-song-list"></div>
           </aside>
 
-          <!-- Player body -->
           <div>
             <div id="fy-song-title">Chưa chọn bài</div>
             <div id="fy-song-meta"></div>
 
-            <div id="fy-timeline">
-              <div id="fy-timeline-fill"></div>
-            </div>
+            <div id="fy-timeline"><div id="fy-timeline-fill"></div></div>
             <div id="fy-times">
               <span id="fy-time-current">0:00</span>
               <span id="fy-time-total">0:00</span>
@@ -697,6 +506,8 @@
               <button id="fy-btn-play">▶ Play</button>
               <button id="fy-btn-pause" disabled>⏸ Pause</button>
               <button id="fy-btn-stop">⏹ Stop</button>
+              <button id="fy-btn-mic" title="Mic demo">🎤 Mic</button>
+              <button id="fy-btn-rec" title="Record demo">⏺ Rec</button>
             </div>
 
             <button id="fy-scroll-toggle">Auto-scroll: OFF</button>
@@ -738,7 +549,6 @@
     </main>
   </div>
 
-  <!-- Logo modal -->
   <div class="logo-modal" id="mk-logo-modal">
     <div class="logo-modal-backdrop"></div>
     <div class="logo-modal-content">
