@@ -2,564 +2,665 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PiChordify Kingdom — FYKINGDOM v0.3 (Pi Login)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PiChordify Kingdom — v0.4</title>
 
   <style>
     :root{
-      --bg:#050816;
-      --panel:#0b1220;
-      --panel-soft:#111827;
-      --panel-soft-2:#1f2937;
-      --text:#e5e7eb;
-      --muted:#9ca3af;
-      --accent:#60a5fa;
-      --accent-soft:#1d4ed8;
-      --radius-lg:18px;
-      --radius-md:12px;
-      --shadow-main:0 20px 40px rgba(0,0,0,.55);
-    }
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{
-      min-height:100vh;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;
-      background:radial-gradient(circle at top,#4c1d95 0,#020617 55%,#000 100%);
-      color:var(--text);
-    }
-    .shell{
-      max-width:1180px;
-      margin:0 auto;
-      padding:22px 14px 40px;
+      --bg:#090c1a;
+      --panel:#141929;
+      --panelSoft:#191f33;
+      --accent:#ff4ecf;
+      --accentSoft:#ff9be7;
+      --muted:#8b92b5;
+      --text:#f5f6ff;
+      --danger:#ff4b6a;
+      --success:#4bd27c;
+      --border:#262b40;
+      --inputBg:#101424;
+      --radius:14px;
+      --shadow:0 18px 45px rgba(0,0,0,.55);
     }
 
-    /* HERO */
-    .hero{
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:radial-gradient(circle at top,#352257 0,#090c1a 55%);
+      color:var(--text);
+      min-height:100vh;
+      padding:20px;
+    }
+    h1,h2,h3{font-weight:650;}
+
+    .app-shell{
+      max-width: 1220px;
+      margin:0 auto;
+    }
+
+    .banner{
+      border-radius:22px;
+      padding:18px 22px;
+      background:linear-gradient(120deg,#ff4ecf,#ff9be7,#ffb470);
+      color:#120819;
       display:flex;
       justify-content:space-between;
       align-items:center;
-      gap:18px;
-      padding:20px 22px;
-      border-radius:24px;
-      background:linear-gradient(135deg,#7c3aed,#ec4899);
-      box-shadow:var(--shadow-main);
-      margin-bottom:22px;
+      margin-bottom:18px;
+      box-shadow:var(--shadow);
     }
-    .hero-main{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
-    .hero-logo-text{
-      font-size:13px;
-      letter-spacing:.16em;
+    .banner-main span{
+      display:inline-block;
       text-transform:uppercase;
+      font-size:11px;
+      letter-spacing:.18em;
+      opacity:.85;
+      margin-bottom:4px;
+    }
+    .banner-main h1{
+      font-size:22px;
+      margin-bottom:4px;
+    }
+    .banner-main p{
+      font-size:13px;
+      max-width:520px;
+    }
+    .banner-tag{
+      text-align:right;
+      font-size:12px;
       opacity:.9;
     }
-    .hero-title{font-size:23px;font-weight:700;}
-    .hero-sub{font-size:14px;opacity:.96;}
-    .hero-right{
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    .hero-badge{
-      min-width:210px;
-      padding:10px 14px;
-      border-radius:999px;
-      background:rgba(15,23,42,.9);
-      font-size:12px;
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-    }
-    .hero-badge span:first-child{font-weight:600;}
-    .hero-badge span:last-child{color:#c4b5fd;}
-    .hero-logo-btn{
-      border:none;
-      padding:0;
-      background:transparent;
-      border-radius:999px;
-      overflow:hidden;
-      width:56px;height:56px;
-      flex:0 0 56px;
-      box-shadow:0 10px 25px rgba(15,23,42,.9);
-      cursor:pointer;
-      transition:transform .22s ease, box-shadow .22s ease;
-    }
-    .hero-logo-btn img{
-      width:100%;height:100%;object-fit:cover;display:block;
-    }
-    .hero-logo-btn:hover{
-      transform:translateY(-2px) scale(1.05);
-      box-shadow:0 16px 35px rgba(15,23,42,1);
-    }
-    @media (max-width:860px){
-      .hero{flex-direction:column;align-items:flex-start;}
-      .hero-right{width:100%;justify-content:space-between;}
+    .banner-tag strong{
+      display:block;
+      font-size:13px;
     }
 
-    /* MAIN LAYOUT */
     .layout{
       display:grid;
-      grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);
-      gap:18px;
+      grid-template-columns: minmax(0,1.1fr) minmax(0,1.05fr);
+      gap:16px;
     }
-    @media (max-width:900px){.layout{grid-template-columns:1fr;}}
-    .panel{
+
+    .card{
       background:var(--panel);
-      border-radius:var(--radius-lg);
-      padding:18px 18px 16px;
-      border:1px solid #1e293b;
-      box-shadow:var(--shadow-main);
+      border-radius:var(--radius);
+      padding:14px 16px 16px;
+      box-shadow:var(--shadow);
+      border:1px solid var(--border);
+      position:relative;
     }
 
-    /* LEFT PANEL */
-    .panel h2{font-size:17px;margin-bottom:10px;}
-    .section-label{font-size:13px;color:var(--muted);margin-bottom:4px;}
-
-    .tabs{display:flex;gap:8px;margin-bottom:12px;}
-    .tab{
-      padding:6px 12px;
-      border-radius:999px;
-      border:none;
-      background:var(--panel-soft);
-      color:var(--muted);
-      font-size:13px;
-      cursor:pointer;
-    }
-    .tab.is-active{
-      background:#f9fafb;
-      color:#111827;
-    }
-
-    .row{display:flex;gap:10px;margin-bottom:10px;}
-    .row > *{flex:1;}
-
-    .input,.select{
-      width:100%;
-      padding:8px 10px;
-      border-radius:var(--radius-md);
-      border:1px solid #334155;
-      background:var(--panel-soft);
-      color:var(--text);
-      font-size:13px;
-    }
-    .select{appearance:none;}
-
-    .pill-indicator{
-      min-width:130px;
-      padding:7px 10px;
-      border-radius:999px;
-      background:var(--panel-soft);
-      border:1px solid #475569;
-      font-size:12px;
-      text-align:center;
+    .card-header{
       display:flex;
+      justify-content:space-between;
       align-items:center;
-      justify-content:center;
+      margin-bottom:10px;
+    }
+    .card-header h2{
+      font-size:15px;
+    }
+    .pill{
+      font-size:11px;
+      padding:3px 8px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      color:var(--muted);
     }
 
-    .textarea{
+    label{
+      display:block;
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+    input[type=text],
+    input[type=file],
+    select,
+    textarea{
       width:100%;
+      border-radius:9px;
+      border:1px solid var(--border);
+      background:var(--inputBg);
+      color:var(--text);
+      padding:7px 9px;
+      font-size:13px;
+      outline:none;
+    }
+    textarea{
       min-height:110px;
       resize:vertical;
-      border-radius:var(--radius-md);
-      border:1px solid #334155;
-      background:var(--panel-soft);
-      color:var(--text);
-      font-size:13px;
-      padding:9px 10px;
+      line-height:1.4;
+      font-family:inherit;
+    }
+    input::placeholder,
+    textarea::placeholder{
+      color:#5c6485;
+    }
+
+    .row{
+      display:flex;
+      gap:8px;
       margin-bottom:8px;
     }
-    .caption{font-size:11px;color:var(--muted);margin-bottom:12px;}
+    .col{flex:1;}
 
-    .row-between{
+    .section-title{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      color:var(--muted);
+      margin:8px 0 4px;
+    }
+
+    .pattern-hint{
+      font-size:11px;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:999px;
+      padding:6px 12px;
+      border:none;
+      background:var(--accent);
+      color:#140816;
+      font-size:12px;
+      font-weight:600;
+      cursor:pointer;
+      gap:6px;
+      box-shadow:0 10px 25px rgba(0,0,0,.45);
+    }
+    .btn-ghost{
+      background:transparent;
+      color:var(--muted);
+      border:1px solid var(--border);
+      box-shadow:none;
+    }
+    .btn-small{padding:4px 9px;font-size:11px;}
+    .btn-danger{background:var(--danger);color:#fff;}
+    .btn-soft{
+      background:rgba(255,255,255,.05);
+      color:var(--accentSoft);
+    }
+
+    .chip-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-bottom:6px;
+      font-size:11px;
+    }
+
+    .textarea-small{
+      min-height:70px;
+    }
+
+    .output-area{
+      margin-top:6px;
+      border-radius:9px;
+      border:1px dashed var(--border);
+      background:#0c101e;
+      padding:6px 8px;
+      font-family:ui-monospace,Menlo,Consolas,monospace;
+      font-size:12px;
+      max-height:160px;
+      overflow:auto;
+      white-space:pre;
+    }
+
+    /* Player */
+    .player-top{
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:10px;
-      margin-bottom:10px;
-    }
-
-    .link-btn{
-      border:none;
-      padding:7px 12px;
-      border-radius:999px;
-      background:var(--panel-soft);
-      color:var(--text);
-      font-size:12px;
-      cursor:default;
-    }
-    .link-btn.primary{
-      background:var(--panel-soft-2);
-      border:1px solid #4b5563;
-    }
-
-    .mp3-row{
-      display:flex;
-      flex-wrap:wrap;
-      align-items:center;
-      gap:8px;
-      margin-bottom:12px;
-    }
-    .mp3-row .input{flex:1 1 240px;}
-    .chip{
-      padding:5px 10px;
-      border-radius:999px;
-      border:1px solid #4b5563;
-      font-size:11px;
-      color:var(--muted);
-      background:var(--panel-soft-2);
-      cursor:pointer;
-    }
-    .mini-note{
-      margin-top:4px;
-      padding-top:8px;
-      border-top:1px dashed #374151;
-      font-size:11px;
-      color:var(--muted);
-    }
-    @media (max-width:640px){
-      .row{flex-direction:column;}
-      .row-between{flex-direction:column;align-items:flex-start;}
-      .mp3-row{flex-direction:column;}
-    }
-
-    /* RIGHT PANEL – PLAYER */
-    #fy-player header{margin-bottom:12px;}
-    #fy-player-title{font-size:16px;font-weight:600;margin-bottom:2px;}
-    #fy-player-note{font-size:12px;color:var(--muted);}
-
-    .fy-layout{
-      display:grid;
-      grid-template-columns:220px minmax(0,1fr);
-      gap:14px;
-      margin-top:10px;
-    }
-    @media (max-width:900px){.fy-layout{grid-template-columns:1fr;}}
-
-    #fy-library{
-      background:var(--panel-soft);
-      border-radius:var(--radius-md);
-      padding:10px;
-      max-height:360px;
-      overflow-y:auto;
-    }
-    .fy-library-title{font-size:13px;font-weight:600;margin-bottom:6px;}
-    #fy-song-list{display:flex;flex-direction:column;gap:4px;}
-    .fy-song-item{
-      width:100%;
-      border:none;
-      text-align:left;
-      padding:9px 9px;
-      border-radius:10px;
-      background:transparent;
-      color:var(--text);
-      cursor:pointer;
-      font-size:13px;
-    }
-    .fy-song-item:hover{background:rgba(148,163,184,.15);}
-    .fy-song-item.is-active{
-      background:var(--panel-soft-2);
-      border-left:3px solid var(--accent);
-    }
-    .fy-song-main{font-weight:600;}
-    .fy-song-artist{font-size:11px;color:var(--muted);}
-    .fy-song-meta{
-      font-size:11px;color:var(--muted);
-      display:flex;gap:6px;margin-top:2px;
-    }
-
-    #fy-song-title{font-size:18px;font-weight:700;margin-bottom:4px;}
-    #fy-song-meta{font-size:13px;color:var(--muted);margin-bottom:10px;}
-
-    #fy-timeline{
-      height:9px;border-radius:999px;
-      background:#020617;overflow:hidden;
-      cursor:pointer;margin-bottom:4px;
-    }
-    #fy-timeline-fill{
-      height:100%;width:0%;
-      border-radius:999px;
-      background:linear-gradient(90deg,#38bdf8,#a855f7);
-    }
-    #fy-times{
-      display:flex;justify-content:space-between;
-      font-size:11px;color:var(--muted);margin-bottom:8px;
-    }
-
-    #fy-volume-row{
-      display:flex;align-items:center;gap:10px;margin-bottom:10px;
-    }
-    #fy-volume-label{font-size:11px;color:var(--muted);min-width:52px;}
-    #fy-volume{flex:1;accent-color:#38bdf8;}
-    #fy-btn-mute{
-      padding:6px 12px;border-radius:999px;border:none;
-      background:var(--panel-soft);color:var(--text);
-      font-size:12px;cursor:pointer;
-    }
-
-    #fy-controls{
-      display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;
-    }
-    #fy-controls button{
-      padding:7px 14px;border-radius:999px;border:none;
-      background:var(--panel-soft);color:var(--text);
-      font-size:13px;cursor:pointer;
-    }
-    #fy-controls button:disabled{opacity:.45;cursor:not-allowed;}
-
-    #fy-scroll-toggle{
-      padding:6px 12px;border-radius:999px;border:none;
-      background:var(--panel-soft-2);color:var(--text);
-      font-size:12px;margin-bottom:8px;cursor:pointer;
-    }
-
-    #fy-scroll-container{
-      max-height:230px;overflow-y:auto;
-      padding:8px 6px 12px;
-      border-radius:var(--radius-md);
-      background:var(--panel-soft);
-    }
-    #fy-chord-sheet{
-      white-space:pre-wrap;
-      font-family:"Menlo","Consolas","Courier New",monospace;
-      font-size:14px;line-height:1.55;
-    }
-
-    .fy-note{font-size:11px;color:var(--muted);margin-top:8px;margin-bottom:10px;}
-
-    /* login / payment */
-    .login-panel{margin-top:10px;padding-top:10px;border-top:1px dashed #374151;}
-    .login-header{
-      display:flex;justify-content:space-between;
-      align-items:center;margin-bottom:8px;font-size:13px;
-    }
-    .login-header small{font-size:11px;color:var(--muted);}
-    .login-buttons{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
-    .login-btn{
-      padding:7px 14px;border-radius:999px;border:none;
-      background:var(--panel-soft-2);color:var(--text);
-      font-size:12px;cursor:pointer;
-    }
-    .login-btn.primary{background:var(--accent-soft);}
-    .login-row{
-      display:flex;justify-content:space-between;
-      align-items:center;font-size:11px;color:var(--muted);
       margin-bottom:6px;
     }
-    .payment-pill{
-      padding:5px 10px;border-radius:999px;
-      background:#020617;border:1px solid #4b5563;
+    .playlist{
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:6px;
     }
-    .log-box{
-      width:100%;min-height:90px;border-radius:var(--radius-md);
-      border:1px solid #334155;background:#020617;color:#e5e7eb;
-      font-family:"Menlo","Consolas","Courier New",monospace;
-      font-size:11px;padding:8px 9px;resize:vertical;
+    .playlist strong{color:var(--text);}
+    .play-controls{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      margin-bottom:10px;
+    }
+    .slider-row{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      margin-bottom:8px;
+      font-size:11px;
+      color:var(--muted);
+    }
+    input[type=range]{flex:1;}
+
+    .lyrics-panel{
+      border-radius:9px;
+      background:var(--panelSoft);
+      border:1px solid var(--border);
+      padding:6px 8px;
+      font-size:12px;
+      max-height:220px;
+      overflow:auto;
+      white-space:pre-wrap;
     }
 
-    /* Logo modal */
-    .logo-modal{
-      position:fixed;inset:0;display:none;
-      align-items:center;justify-content:center;z-index:40;
+    .badge-green{
+      font-size:10px;
+      padding:3px 7px;
+      border-radius:999px;
+      background:rgba(75,210,124,.14);
+      color:var(--success);
+      border:1px solid rgba(75,210,124,.4);
     }
-    .logo-modal.is-open{display:flex;}
-    .logo-modal-backdrop{
-      position:absolute;inset:0;
-      background:rgba(15,23,42,.85);
-      backdrop-filter:blur(8px);
+
+    .login-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-top:8px;
+      font-size:11px;
+      color:var(--muted);
+      gap:8px;
+      flex-wrap:wrap;
     }
-    .logo-modal-content{
-      position:relative;max-width:90vw;max-height:90vh;
-      border-radius:18px;overflow:hidden;
-      box-shadow:0 30px 80px rgba(0,0,0,.9);
-      border:1px solid #4c1d95;z-index:41;
+    .login-actions{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
     }
-    .logo-modal-content img{
-      display:block;max-width:100%;max-height:100%;object-fit:contain;
+
+    /* Mic recording */
+    .rec-row{
+      display:flex;
+      gap:6px;
+      align-items:center;
+      margin-bottom:6px;
+      font-size:11px;
     }
-    .logo-modal-close{
-      position:absolute;top:8px;right:10px;
-      border:none;border-radius:999px;padding:4px 9px;
-      font-size:13px;cursor:pointer;
-      background:rgba(15,23,42,.92);color:#e5e7eb;
+    .dot-live{
+      width:8px;height:8px;border-radius:50%;
+      background:var(--danger);
+      box-shadow:0 0 0 3px rgba(255,75,106,.45);
+    }
+
+    /* Help */
+    .icon-help{
+      cursor:pointer;
+      font-size:13px;
+      color:var(--muted);
+      padding:4px 6px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+    }
+
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.6);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:40;
+    }
+    .modal{
+      width:min(620px,100% - 32px);
+      background:var(--panel);
+      border-radius:18px;
+      padding:14px 16px 16px;
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+      font-size:13px;
+    }
+    .modal-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:8px;
+    }
+    .tabs{
+      display:inline-flex;
+      border-radius:999px;
+      background:#111522;
+      padding:3px;
+      gap:3px;
+    }
+    .tab{
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:11px;
+      cursor:pointer;
+      border:none;
+      background:transparent;
+      color:var(--muted);
+    }
+    .tab.active{
+      background:var(--accent);
+      color:#140816;
+      font-weight:600;
+    }
+    .modal-body{
+      margin-top:6px;
+      max-height:360px;
+      overflow:auto;
+      line-height:1.45;
+      color:#d8ddff;
+    }
+    .modal-body h3{
+      font-size:14px;
+      margin:6px 0;
+    }
+    .modal-body p{
+      margin-bottom:4px;
+    }
+    .modal-body ul{
+      padding-left:18px;
+      margin-bottom:4px;
+    }
+    .modal-body li{
+      margin-bottom:3px;
+    }
+
+    @media(max-width:960px){
+      .layout{grid-template-columns:1fr;}
     }
   </style>
 
-  <!-- Pi SDK sẽ chỉ hoạt động trong Pi Browser -->
-  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <script src="index.js" defer></script>
 </head>
 <body>
-  <div class="shell">
+  <div class="app-shell">
 
-    <section class="hero">
-      <div class="hero-main">
-        <div class="hero-logo-text">MUSICKINGDOM</div>
-        <div class="hero-title">PiChordify Kingdom</div>
-        <div class="hero-sub">
-          Công cụ gợi ý hợp âm & luyện hát trong hệ sinh thái Pi – bản FYKINGDOM chạy thuần frontend, đã gắn Pi Login / Pi Pay (DEV).
+    <header class="banner">
+      <div class="banner-main">
+        <span>MUSICKINGDOM</span>
+        <h1>PiChordify Kingdom</h1>
+        <p>
+          Công cụ gợi ý hợp âm & luyện hát trong hệ sinh thái Pi – bản FYKINGDOM dành riêng
+          cho thử nghiệm frontend, gắn liền Pi Login &amp; Pi Pay (DEV).
+        </p>
+      </div>
+      <div class="banner-tag">
+        <strong>FYKINGDOM v0.4</strong>
+        <div>Golden Turtle Edition · Pi SDK SANDBOX</div>
+        <div style="margin-top:6px;">
+          <button class="icon-help" id="openHelpBtn">❓ Hướng dẫn</button>
         </div>
       </div>
-      <div class="hero-right">
-        <div class="hero-badge">
-          <span>FYKINGDOM v0.3</span>
-          <span>Golden Turtle Edition — Pi Login & Pi Pay (DEV).</span>
-        </div>
-        <button class="hero-logo-btn" id="mk-logo-btn" title="Musickingdom Golden Turtle">
-          <img src="assets/musickingdom-golden-turtle.jpg" alt="Musickingdom Golden Turtle" />
-        </button>
-      </div>
-    </section>
+    </header>
 
     <main class="layout">
-
-      <!-- LEFT -->
-      <section class="panel">
-        <h2>Bản nhạc mới (giao diện demo)</h2>
-
-        <div class="section-label">Nhạc cụ</div>
-        <div class="tabs" id="fy-instrument-tabs">
-          <button class="tab is-active" data-instrument="Piano">Piano</button>
-          <button class="tab" data-instrument="Guitar">Guitar</button>
-          <button class="tab" data-instrument="Ukulele">Ukulele</button>
+      <!-- BÊN TRÁI: BẢN NHẠC MỚI -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Bản nhạc mới (giao diện demo)</h2>
+          <span class="pill">Composer panel</span>
         </div>
 
         <div class="row">
-          <div>
-            <div class="section-label">Tên bài</div>
-            <input id="fy-input-title" class="input" placeholder="Ví dụ: Tran682025 – Demo Jam" />
-          </div>
-          <div>
-            <div class="section-label">Giọng (key)</div>
-            <select id="fy-select-key" class="select">
-              <option value="G">G</option>
-              <option value="C">C</option>
-              <option value="D">D</option>
-              <option value="Em">Em</option>
-              <option value="Am">Am</option>
+          <div class="col">
+            <label for="instrumentSelect">Nhạc cụ</label>
+            <select id="instrumentSelect">
+              <option value="piano">Piano</option>
+              <option value="guitar">Guitar</option>
+              <option value="ukulele">Ukulele</option>
             </select>
           </div>
-          <div class="pill-indicator">Tiến trình: I – V – vi – IV</div>
-        </div>
-
-        <div class="section-label">Lời + hợp âm (mỗi dòng có mốc thời gian)</div>
-        <textarea id="fy-input-lyrics" class="textarea" placeholder="00:12   Em   D / ..."></textarea>
-
-        <div class="section-label">Mẫu hợp âm cho cả bài (pattern)</div>
-        <textarea id="fy-input-pattern" class="textarea" placeholder="Ví dụ: C  G  Am  F  |  F  G  Em  Am"></textarea>
-        <div class="caption">
-          Pattern sẽ lặp từ đầu đến cuối bài, mỗi hợp âm chia đều theo chiều dài MP3.  
-          FYKINGDOM v0.3 cho phép đẩy nội dung này sang player bên phải để tập thử.
-        </div>
-
-        <div class="row-between">
-          <button class="link-btn primary">Auto fill (demo)</button>
-          <button class="link-btn">Tự điền hợp âm theo pattern (chưa bật)</button>
-        </div>
-
-        <div class="section-label">File MP3 (tuỳ chọn)</div>
-        <div class="mp3-row">
-          <input id="fy-input-mp3" class="input" placeholder="Dán link https://.../song.mp3 hoặc chọn file bên cạnh" />
-          <button type="button" id="fy-btn-select-mp3" class="chip">Chọn MP3</button>
-          <button type="button" id="fy-btn-load-mp3" class="chip">Load</button>
-          <input id="fy-input-mp3-file" type="file" accept="audio/*" style="display:none" />
-        </div>
-
-        <div class="row-between">
-          <div class="mini-note">
-            Dán link hoặc chọn file MP3, điền hợp âm rồi bấm <b>“Đưa sang player ▶”</b> để tạo bản custom và nghe thử.
+          <div class="col">
+            <label for="songTitleInput">Tên bài</label>
+            <input id="songTitleInput" type="text" placeholder="Ví dụ: Tran682025 – Demo Jam" />
           </div>
-          <button id="fy-btn-load-to-player" class="link-btn primary">Đưa sang player ▶</button>
         </div>
+
+        <div class="row">
+          <div class="col">
+            <label for="keyInput">Giọng (key)</label>
+            <input id="keyInput" type="text" placeholder="Ví dụ: G / C / Dm..." />
+          </div>
+          <div class="col">
+            <label for="progressionInput">Tiến trình: I–V–vi–IV</label>
+            <input id="progressionInput" type="text" placeholder="Tùy chọn, chỉ để ghi chú" />
+          </div>
+        </div>
+
+        <div class="section-title">Lời + hợp âm (có mốc thời gian)</div>
+        <p class="pattern-hint">
+          Mỗi dòng có thể bắt đầu bằng mốc thời gian, ví dụ:
+          <code>[00:12] Ngày mai…</code>
+        </p>
+        <textarea id="lyricsInput" placeholder="[00:12] Ngày mai rồi sáng trên thành
+[00:26] Không còn ai phải đi bên linh hồn
+[00:40] Anh đem ta viết nên bài ca mới"></textarea>
+
+        <div class="section-title">Mẫu hợp âm cho cả bài (pattern)</div>
+        <p class="pattern-hint">
+          Ví dụ: <code>G D Em C</code> hoặc <code>C G Am F G F Em Am</code>. App sẽ lặp lại
+          pattern theo từng dòng lời.
+        </p>
+
+        <div class="row">
+          <div class="col">
+            <input id="patternInput" type="text"
+                   placeholder="Ví dụ: C G Am F G F Em Am" />
+          </div>
+          <button class="btn btn-small" id="autoFillPatternBtn">Auto fill (theo key)</button>
+        </div>
+
+        <div class="chip-row">
+          <button class="btn-soft btn-small" data-preset="C G Am F">Pop ballad</button>
+          <button class="btn-soft btn-small" data-preset="G D Em C">Worship G</button>
+          <button class="btn-soft btn-small" data-preset="Dm Bb F C">Modern worship</button>
+        </div>
+
+        <button class="btn btn-small" id="applyPatternBtn">Áp dụng pattern → sinh hợp âm</button>
+
+        <div class="output-area" id="lyricsWithChordsOutput">
+[demo] Chờ bạn bấm “Áp dụng pattern” để sinh hợp âm…
+        </div>
+
+        <div class="section-title">File MP3 (tùy chọn)</div>
+        <p class="pattern-hint">Chọn file beat hoặc bản demo để luyện trong Player.</p>
+        <input id="mp3FileInput" type="file" accept="audio/*" />
+
       </section>
 
-      <!-- RIGHT -->
-      <section class="panel" id="fy-player">
-        <header>
-          <div id="fy-player-title">FYKINGDOM Player</div>
-          <div id="fy-player-note">
-            Chọn một bản demo ở danh sách bên trái, hoặc tạo bản custom từ panel “Bản nhạc mới”.
+      <!-- BÊN PHẢI: PLAYER -->
+      <section class="card">
+        <div class="card-header">
+          <h2>FYKINGDOM Player</h2>
+          <span class="pill">Practice panel</span>
+        </div>
+
+        <div class="player-top">
+          <div style="font-size:13px;">
+            <div><strong id="currentSongTitle">Tran682025 – Demo Jam</strong></div>
+            <div style="font-size:11px;color:var(--muted);">
+              PiChordify Kingdom · Key G · 92 BPM · 3:45
+            </div>
           </div>
-        </header>
+          <span class="badge-green">Pi SDK ready (SANDBOX)</span>
+        </div>
 
-        <div class="fy-layout">
-          <aside id="fy-library">
-            <div class="fy-library-title">Danh sách bản demo</div>
-            <div id="fy-song-list"></div>
-          </aside>
+        <div class="playlist">
+          <div>Danh sách bản demo</div>
+          <div>• <strong>Tran682025 – Demo Jam</strong> · 92 BPM · 3:45</div>
+          <div>• Focus Mode Practice · 75 BPM · 4:12</div>
+        </div>
 
-          <div>
-            <div id="fy-song-title">Chưa chọn bài</div>
-            <div id="fy-song-meta"></div>
+        <audio id="audioPlayer" src="" preload="metadata"></audio>
 
-            <div id="fy-timeline"><div id="fy-timeline-fill"></div></div>
-            <div id="fy-times">
-              <span id="fy-time-current">0:00</span>
-              <span id="fy-time-total">0:00</span>
-            </div>
+        <div class="play-controls">
+          <button class="btn-small btn btn-soft" id="playBtn">▶ Play</button>
+          <button class="btn-small btn btn-soft" id="pauseBtn">⏸ Pause</button>
+          <button class="btn-small btn btn-soft" id="stopBtn">⏹ Stop</button>
+        </div>
 
-            <div id="fy-volume-row">
-              <span id="fy-volume-label">Volume</span>
-              <input id="fy-volume" type="range" min="0" max="1" step="0.01" value="1" />
-              <button id="fy-btn-mute">Mute</button>
-            </div>
+        <div class="slider-row">
+          <span>Tốc độ / BPM</span>
+          <input id="speedSlider" type="range" min="0.5" max="1.5" step="0.05" value="1" />
+          <span id="speedLabel">1.0×</span>
+        </div>
 
-            <div id="fy-controls">
-              <button id="fy-btn-play">▶ Play</button>
-              <button id="fy-btn-pause" disabled>⏸ Pause</button>
-              <button id="fy-btn-stop">⏹ Stop</button>
-              <button id="fy-btn-mic" title="Mic demo">🎤 Mic</button>
-              <button id="fy-btn-rec" title="Record demo">⏺ Rec</button>
-            </div>
+        <div class="slider-row">
+          <span>Âm lượng</span>
+          <input id="volumeSlider" type="range" min="0" max="1" step="0.02" value="0.9" />
+        </div>
 
-            <button id="fy-scroll-toggle">Auto-scroll: OFF</button>
+        <div class="rec-row">
+          <span style="font-size:11px;color:var(--muted);">Bản thu của bạn</span>
+          <button class="btn-small btn" id="startRecBtn">🎙 Rec</button>
+          <button class="btn-small btn btn-danger" id="stopRecBtn">■ Stop</button>
+          <span id="recStatus" style="display:flex;align-items:center;gap:4px;">
+            <span class="dot-live" style="display:none;" id="recDot"></span>
+            <span id="recText" style="color:var(--muted);">Idle</span>
+          </span>
+        </div>
 
-            <div id="fy-scroll-container">
-              <pre id="fy-chord-sheet"></pre>
-            </div>
+        <audio id="userRecordingAudio" controls style="width:100%;margin-bottom:6px;"></audio>
 
-            <div class="fy-note">
-              Nếu chưa gắn file MP3, thanh thời gian sẽ giả lập độ dài 4 phút để dễ tập thử.
-            </div>
+        <div class="lyrics-panel" id="lyricsPreview">
+[Intro]
+G  D/F#  Em   C
 
-            <div class="login-panel">
-              <div class="login-header">
-                <div>Đăng nhập & thanh toán</div>
-                <small>Chế độ DEV – sử dụng Pi SDK v2.0.</small>
-              </div>
+[Verse 1]
+G                D/F#
+Ngày mai rồi sáng trên thành
+Em
+Không còn ai phải đi bên linh hồn
+C                 D/F#
+Anh đem ta viết nên bài ca mới
+        </div>
 
-              <div class="login-buttons">
-                <button class="login-btn primary" id="fy-btn-pi-login">Pi Login (DEV)</button>
-                <button class="login-btn" id="fy-btn-check-premium">Kiểm tra Premium</button>
-                <button class="login-btn" id="fy-btn-pi-pay">Pi Payment (DEV)</button>
-              </div>
-
-              <div class="login-row">
-                <span>Pi Login / Pi Pay chỉ hoạt động trong Pi Browser + có backend.</span>
-                <span class="payment-pill" id="fy-pill-status">Pi SDK: chưa init</span>
-              </div>
-
-              <textarea class="log-box" readonly id="fy-log-box">Log:
-- FYKINGDOM v0.3 đã gắn Pi SDK (client).
-- Cần mở app trong Pi Browser và cấu hình BACKEND_URL để Pi Payment hoàn tất.
-</textarea>
-            </div>
+        <div class="login-row">
+          <div>Đang chạy ở trạng thái: <strong>Chế độ DEV</strong>, thanh toán Pi chỉ chạy
+            khi Pi SDK (client) &amp; backend UP, Pi Payment mở trên app Pi và test (SANDBOX).</div>
+          <div class="login-actions">
+            <button class="btn-small btn-soft">Pi Login (DEV)</button>
+            <button class="btn-small btn-soft">Pi Payment (DEV)</button>
           </div>
         </div>
       </section>
-
     </main>
   </div>
 
-  <div class="logo-modal" id="mk-logo-modal">
-    <div class="logo-modal-backdrop"></div>
-    <div class="logo-modal-content">
-      <button class="logo-modal-close" id="mk-logo-close">✕</button>
-      <img src="assets/musickingdom-golden-turtle.jpg" alt="Musickingdom Golden Turtle full" />
+  <!-- HELP MODAL -->
+  <div class="modal-backdrop" id="helpModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h3>Hướng dẫn sử dụng PiChordify Kingdom</h3>
+          <div style="font-size:11px;color:var(--muted);">
+            Tóm tắt cách học với app · VN / EN / Dev notes
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div class="tabs">
+            <button class="tab active" data-help-tab="vn">VN</button>
+            <button class="tab" data-help-tab="en">EN</button>
+            <button class="tab" data-help-tab="dev">Dev</button>
+          </div>
+          <button class="btn-small btn-ghost" id="closeHelpBtn">✕</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div data-help-content="vn">
+          <h3>1. Chọn nhạc cụ và bài luyện</h3>
+          <ul>
+            <li>Ở panel “Bản nhạc mới”, chọn Piano / Guitar / Ukulele.</li>
+            <li>Nhập tên bài, giọng (Key) và nếu muốn, ghi chú tiến trình hợp âm.</li>
+            <li>Nhập mẫu vòng hợp âm (pattern) hoặc chọn nhanh bằng các preset.</li>
+          </ul>
+
+          <h3>2. Thêm lời + mốc thời gian</h3>
+          <ul>
+            <li>Gõ lời, có thể thêm mốc thời gian dạng <code>[00:12]</code> ở đầu dòng.</li>
+            <li>Bấm “Áp dụng pattern” để app tự sinh hợp âm theo từng dòng.</li>
+            <li>Có thể sửa tay lại hợp âm trong phần kết quả nếu muốn.</li>
+          </ul>
+
+          <h3>3. Luyện với FYKINGDOM Player</h3>
+          <ul>
+            <li>Bấm Play để nghe beat hoặc bản demo.</li>
+            <li>Dùng thanh tốc độ để giảm / tăng BPM tùy trình độ.</li>
+            <li>Khi dùng bản chính thức, có thể thêm Focus Mode để lặp từng đoạn.</li>
+          </ul>
+
+          <h3>4. Thu lại phần trình diễn của bạn</h3>
+          <ul>
+            <li>Bấm Rec để bắt đầu ghi âm bằng mic, hát hoặc chơi nhạc cùng beat.</li>
+            <li>Bấm Stop để dừng, phát lại bản thu ở khu vực “Bản thu của bạn”.</li>
+            <li>Các bản thu nằm offline trên trình duyệt của bạn (giai đoạn DEV).</li>
+          </ul>
+
+          <h3>5. Lộ trình luyện tập gợi ý</h3>
+          <ul>
+            <li>Ngày 1–2: chỉ luyện Intro + Verse 1 ở tốc độ chậm.</li>
+            <li>Ngày 3–4: thêm Chorus, tăng tốc độ về gần BPM gốc.</li>
+            <li>Ngày 5+: thu toàn bài, nghe lại để sửa nhịp và cao độ.</li>
+          </ul>
+        </div>
+
+        <div data-help-content="en" style="display:none;">
+          <h3>1. Pick your instrument and song</h3>
+          <ul>
+            <li>In “New song”, choose Piano / Guitar / Ukulele.</li>
+            <li>Set the Title, Key and optionally a chord progression note.</li>
+            <li>Type a chord pattern or use one of the presets.</li>
+          </ul>
+
+          <h3>2. Add lyrics and timestamps</h3>
+          <ul>
+            <li>Write your lyrics, optionally starting lines with timestamps like <code>[00:12]</code>.</li>
+            <li>Click “Apply pattern” to auto-generate chords per line.</li>
+            <li>Manually tweak any chords in the result section if needed.</li>
+          </ul>
+
+          <h3>3. Practice with the FYKINGDOM Player</h3>
+          <ul>
+            <li>Press Play to hear the backing track or demo.</li>
+            <li>Use the speed slider to slow down or speed up.</li>
+            <li>Focus Mode and Pi Login / Pi Pay are reserved for the full Pi App.</li>
+          </ul>
+
+          <h3>4. Record your performance</h3>
+          <ul>
+            <li>Hit Rec to start recording through your microphone.</li>
+            <li>Sing or play along with the track while it is playing.</li>
+            <li>Press Stop, then listen back to your take in “Your recording”.</li>
+          </ul>
+
+          <h3>5. Suggested routine</h3>
+          <ul>
+            <li>Day 1–2: practice Intro + Verse 1 at a slower tempo.</li>
+            <li>Day 3–4: add the Chorus, raise the tempo towards original BPM.</li>
+            <li>Day 5+: record the full song and review timing &amp; pitch.</li>
+          </ul>
+        </div>
+
+        <div data-help-content="dev" style="display:none;">
+          <h3>Dev notes (FYKINGDOM v0.4)</h3>
+          <ul>
+            <li>Client: pure HTML/CSS/JS, single page.</li>
+            <li>Audio: native <code>&lt;audio&gt;</code> element + <code>playbackRate</code> for speed.</li>
+            <li>Recording: <code>MediaRecorder</code> API, audio/webm blobs, kept in-memory.</li>
+            <li>Pattern engine: lines from lyrics mapped via <code>index % pattern.length</code>.</li>
+            <li>Pi SDK: placeholder buttons for Pi Login / Pi Payment (SANDBOX hooks).</li>
+            <li>Ready to be wrapped into Pi Browser app and wired with real Pi SDK calls.</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
-
-  <script src="index.js"></script>
 </body>
 </html>
